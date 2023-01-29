@@ -1,8 +1,8 @@
 const { User, Tip, Tovar, Mijoz, Yetkazuvchi, Valyuta, Chiqim, Savdo, Sotuv, Karzina, Zaqaz } = require('../../models');
 const { Op } = require("sequelize");
-const UsweController2 = require('./UsweController2');
+const UserController2 = require('./UserController2');
 
-class UsweController extends UsweController2 {
+class UserController extends UserController2 {
     // async UserById (req, res) {
     //     const userby = await User.findByPk(
     //         req.body.id
@@ -12,13 +12,12 @@ class UsweController extends UsweController2 {
     
     async Verifiy (req, res) {
         const user = await User.findOne({ where: { login: req.body.login, token: req.body.token }});
-        const mijoz = await Mijoz.count({ where: { userId: { [Op.eq]: user.id }}});
-        const savdo = await Savdo.count({ where: { userId: user.id }});
-        const karz = await Savdo.count({ where: { userId: user.id , karz: { [Op.gt]: '0'}}});
-        const savdo2 = await Sotuv.count({ where: { userId: user.id, savdoId: 0 }});
-        const zaqaz = await Zaqaz.count({ where: { userId: user.id }});
-        var count = savdo + savdo2;
-        return res.json({'user':user, 'mijoz': mijoz, 'savdo': count, 'zaqaz': zaqaz, 'karz': karz});
+        const mijoz = await Mijoz.findAll({ where: { userId: { [Op.eq]: user.id }}});
+        const savdo = await Savdo.findAll({ where: { userId: user.id }});
+        const karz = await Savdo.findAll({ where: { userId: user.id , karz: { [Op.gt]: '0'}}});
+        const savdo2 = await Sotuv.findAll({ where: { userId: user.id, savdoId: 0 }});
+        const zaqaz = await Zaqaz.findAll({ where: { userId: user.id }});
+        return res.json({'user':user, 'mijoz': mijoz, 'savdo': savdo, 'savdo2': savdo2, 'zaqaz': zaqaz, 'karz': karz});
     }
 
     async Valyuta_Get (req, res) {
@@ -364,4 +363,4 @@ class UsweController extends UsweController2 {
         return res.json(200);
     }
 }
-module.exports = new UsweController();
+module.exports = new UserController();
