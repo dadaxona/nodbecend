@@ -9,7 +9,6 @@ class UsweController extends UsweController2 {
     //     );
     //     return res.json({"user": userby})
     // }
-    
     async Verifiy (req, res) {
         const user = await User.findOne({ where: { login: req.body.login, token: req.body.token }});
         const mijoz = await Mijoz.count({ where: { userId: { [Op.eq]: user.id }}});
