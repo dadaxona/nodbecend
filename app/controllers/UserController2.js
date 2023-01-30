@@ -1,6 +1,6 @@
 const { User, Tip, Mijoz } = require('../../models');
-class UsweController2 {
+class UserController2 {
     
 
 }
-module.exports = UsweController2;
+module.exports = UserController2;
