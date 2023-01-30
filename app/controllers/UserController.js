@@ -3,12 +3,14 @@ const { Op } = require("sequelize");
 const UserController2 = require('./UserController2');
 
 class UserController extends UserController2 {
+    
     // async UserById (req, res) {
     //     const userby = await User.findByPk(
     //         req.body.id
     //     );
     //     return res.json({"user": userby})
     // }
+
     async Verifiy (req, res) {
         const user = await User.findOne({ where: { login: req.body.login, token: req.body.token }});
         const mijoz = await Mijoz.findAll({ where: { userId: { [Op.eq]: user.id }}});
