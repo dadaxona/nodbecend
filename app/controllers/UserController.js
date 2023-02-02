@@ -11,13 +11,19 @@ class UserController extends UserController2 {
     // }
     
     async Verifiy (req, res) {
+        var d = new Date();
         const user = await User.findOne({ where: { login: req.body.login, token: req.body.token }});
-        const mijoz = await Mijoz.findAll({ where: { userId: { [Op.eq]: user.id }}});
-        const savdo = await Savdo.findAll({ where: { userId: user.id }});
-        const karz = await Savdo.findAll({ where: { userId: user.id , karz: { [Op.gt]: '0'}}});
-        const savdo2 = await Sotuv.findAll({ where: { userId: user.id, savdoId: 0 }});
-        const zaqaz = await Zaqaz.findAll({ where: { userId: user.id }});
-        return res.json({'user':user, 'mijoz': mijoz, 'savdo': savdo, 'savdo2': savdo2, 'zaqaz': zaqaz, 'karz': karz});
+        if (user) {
+            const mijoz = await Mijoz.findAll({ where: { userId: { [Op.eq]: user.id }}});
+            const savdo = await Savdo.findAll({ where: { userId: user.id }});
+            const karz = await Savdo.findAll({ where: { userId: user.id , karz: { [Op.gt]: '0' }}});
+            const srok = await Savdo.findAll({ where: { userId: user.id , karz: { [Op.gt]: '0' }, srok: { [Op.lt]: req.body.date } }});
+            const savdo2 = await Sotuv.findAll({ where: { userId: user.id, savdoId: 0 }});
+            const zaqaz = await Zaqaz.findAll({ where: { userId: user.id }});
+            return res.json({'code': 200, 'user':user, 'mijoz': mijoz, 'savdo': savdo, 'savdo2': savdo2, 'zaqaz': zaqaz, 'karz': karz, 'srok': srok});            
+        } else {
+            return res.json({'code': 0});
+        }
     }
 
     async Valyuta_Get (req, res) {
@@ -88,7 +94,8 @@ class UserController extends UserController2 {
                 name: req.body.name,
                 firma: req.body.firma,
                 tel: req.body.tel,
-                telegram: req.body.telegram
+                telegram: req.body.telegram,
+                summa: req.body.summa,
             },
             {
                 where: { id: req.body.id }
@@ -103,7 +110,8 @@ class UserController extends UserController2 {
                 firma: req.body.firma,
                 tel: req.body.tel,
                 telegram: req.body.telegram,
-                summa: req.body.summa
+                summa: req.body.summa,
+                karz: 0
             });
         }
         return res.json(200);
@@ -296,6 +304,8 @@ class UserController extends UserController2 {
         const user = await User.findOne({ where: { login: req.body.login, token: req.body.token }});
         if (req.body.mijozId) {
             const mijoz = await Mijoz.findByPk(req.body.mijozId);
+            mijoz.karz = parseFloat(mijoz.karz) + parseFloat(req.body.karz);
+            await mijoz.save()
             const savdo = await Savdo.create({
                 userId: user.id,
                 mijozId: mijoz.id,

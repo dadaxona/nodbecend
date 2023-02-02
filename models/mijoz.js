@@ -21,7 +21,8 @@ module.exports = (sequelize, DataTypes) => {
     firma: DataTypes.STRING,
     tel: DataTypes.STRING,
     telegram: DataTypes.STRING,
-    summa: DataTypes.STRING
+    karz: DataTypes.STRING,
+    summa: DataTypes.STRING,
   }, {
     sequelize,
     modelName: 'Mijoz',

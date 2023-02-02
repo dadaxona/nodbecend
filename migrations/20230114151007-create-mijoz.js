@@ -24,6 +24,9 @@ module.exports = {
       telegram: {
         type: Sequelize.STRING
       },
+      karz: {
+        type: Sequelize.STRING
+      },
       summa: {
         type: Sequelize.STRING
       },
