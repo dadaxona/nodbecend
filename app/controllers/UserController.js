@@ -12,16 +12,16 @@ class UserController extends UserController2 {
     // }
 
     async Verifiy (req, res) {
-        var d = new Date();
         const user = await User.findOne({ where: { login: req.body.login, token: req.body.token }});
         if (user) {
             const mijoz = await Mijoz.findAll({ where: { userId: { [Op.eq]: user.id }}});
             const savdo = await Savdo.findAll({ where: { userId: user.id }});
             const karz = await Savdo.findAll({ where: { userId: user.id , karz: { [Op.gt]: '0' }}});
-            const srok = await Savdo.findAll({ where: { userId: user.id , karz: { [Op.gt]: '0' }, srok: { [Op.lt]: req.body.date } }});
+            const srok = await Savdo.findAll({ where: { userId: user.id , karz: { [Op.gt]: '0' }, srok: { [Op.lt]: req.body.date }}});
             const savdo2 = await Sotuv.findAll({ where: { userId: user.id, savdoId: 0 }});
             const zaqaz = await Zaqaz.findAll({ where: { userId: user.id }});
-            return res.json({'code': 200, 'user':user, 'mijoz': mijoz, 'savdo': savdo, 'savdo2': savdo2, 'zaqaz': zaqaz, 'karz': karz, 'srok': srok});            
+            const karzina = await Karzina.findAll({ where: { userId: user.id }});
+            return res.json({'code': 200, 'user':user, 'mijoz': mijoz, 'savdo': savdo, 'savdo2': savdo2, 'zaqaz': zaqaz, 'karz': karz, 'karzina': karzina, 'srok': srok});            
         } else {
             return res.json({'code': 0});
         }
@@ -372,6 +372,24 @@ class UserController extends UserController2 {
             });
         }
         return res.json(200);
+    }
+
+    async Tolov_Post(req, res) {
+        var data = await Savdo.findByPk(req.body.id);
+        data.karz = parseFloat(data.karz) - parseFloat(req.body.tolov);
+        data.srok = req.body.srok;            
+        await data.save();
+        return res.json(200);
+    }
+
+    async Zaqaz_Delet(req, res) {
+        await Zaqaz.destroy({ where: {id: req.body.id} });
+        await Karzina.destroy({ where: {zaqazId: req.body.id} });
+        return res.json(200);
+    }
+    async Sotuv_Post_Id(req, res) {
+        const savdo = await Sotuv.findAll({ where: { savdoId: req.body.id }});
+        return res.json(savdo);
     }
 }
 module.exports = new UserController();

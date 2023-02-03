@@ -36,4 +36,8 @@ route.post('/live_search', UserController.Live_Search)
 route.post('/oplata', UserController.Oplata)
 route.post('/karzina', UserController.Karzina)
 
+route.post('/tolovpost', UserController.Tolov_Post)
+route.post('/zaqaz_delet', UserController.Zaqaz_Delet)
+route.post('/sotuv_post_id', UserController.Sotuv_Post_Id)
+
 module.exports = route
