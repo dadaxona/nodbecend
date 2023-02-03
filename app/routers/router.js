@@ -7,6 +7,9 @@ const route = Router()
 route.post('/loginauth', UserController.Login)
 route.post('/register', UserController.Registration)
 route.post('/virfiy', UserController.Verifiy)
+route.post('/userget', UserController.User_Get)
+route.post('/user_update_any', UserController.User_Update)
+route.post('/user_del_clear', UserController.User_Del_Clear)
 
 route.post('/gettip', UserController.Gettip)
 route.post('/post_update', UserController.Post_Update_Tip)
@@ -39,5 +42,6 @@ route.post('/karzina', UserController.Karzina)
 route.post('/tolovpost', UserController.Tolov_Post)
 route.post('/zaqaz_delet', UserController.Zaqaz_Delet)
 route.post('/sotuv_post_id', UserController.Sotuv_Post_Id)
+route.post('/foyda_post', UserController.Foyda_Post)
 
 module.exports = route

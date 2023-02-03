@@ -16,12 +16,16 @@ module.exports = (sequelize, DataTypes) => {
   Sotuv.init({
     userId: DataTypes.INTEGER,
     savdoId: DataTypes.INTEGER,
+    savdo2Id: DataTypes.INTEGER,
     tovar: DataTypes.INTEGER,
     name: DataTypes.STRING,
+    olinish: DataTypes.STRING,
     soni: DataTypes.STRING,
     sotilish: DataTypes.STRING,
     chegrma: DataTypes.STRING,
-    jami: DataTypes.STRING
+    jami: DataTypes.STRING,
+    valy: DataTypes.STRING,
+    valyuta: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'Sotuv',

@@ -1,4 +1,4 @@
-const { User, Tip, Tovar, Mijoz, Yetkazuvchi, Valyuta, Chiqim, Savdo, Sotuv, Karzina, Zaqaz } = require('../../models');
+const { User, Tip, Tovar, Mijoz, Yetkazuvchi, Valyuta, Chiqim, Savdo, Sotuv, Karzina, Zaqaz, Savdo2 } = require('../../models');
 const { Op } = require("sequelize");
 const UserController2 = require('./UserController2');
 
@@ -10,6 +10,26 @@ class UserController extends UserController2 {
     //     );
     //     return res.json({"user": userby})
     // }
+    async User_Get(req, res){
+        const user = await User.findOne({ where: { login: req.body.login, token: req.body.token }});
+        return res.json([user]);
+    }
+
+    async User_Update(req, res){
+        const userby = await User.update(req.body, { where: { id: req.body.id } });
+        if (userby) {
+            return res.json(200);
+        } else {
+            
+        }
+    }
+
+    async User_Del_Clear(req, res){
+        await User.destroy({
+            where: { id: req.body.id }
+        });
+        return res.json(200);
+    }
 
     async Verifiy (req, res) {
         const user = await User.findOne({ where: { login: req.body.login, token: req.body.token }});
@@ -18,7 +38,7 @@ class UserController extends UserController2 {
             const savdo = await Savdo.findAll({ where: { userId: user.id }});
             const karz = await Savdo.findAll({ where: { userId: user.id , karz: { [Op.gt]: '0' }}});
             const srok = await Savdo.findAll({ where: { userId: user.id , karz: { [Op.gt]: '0' }, srok: { [Op.lt]: req.body.date }}});
-            const savdo2 = await Sotuv.findAll({ where: { userId: user.id, savdoId: 0 }});
+            const savdo2 = await Savdo2.findAll({ where: { userId: user.id }});
             const zaqaz = await Zaqaz.findAll({ where: { userId: user.id }});
             const karzina = await Karzina.findAll({ where: { userId: user.id }});
             return res.json({'code': 200, 'user':user, 'mijoz': mijoz, 'savdo': savdo, 'savdo2': savdo2, 'zaqaz': zaqaz, 'karz': karz, 'karzina': karzina, 'srok': srok});            
@@ -70,12 +90,20 @@ class UserController extends UserController2 {
         const data = await User.findOne({  
             where: { login: req.body.login, password: req.body.password }
         });
-        return res.json(data);
+        if (data) {
+            return res.json({'code': 200, 'data': data});            
+        } else {
+            return res.json({'code': 0});
+        }
     }
 
     async Registration (req, res) {
-        const data = await User.create(req.body) 
-        return res.json(data);
+        const data = await User.create(req.body)
+        if (data) {
+            return res.json({'code': 200, 'data': data});            
+        } else {
+            return res.json({'code': 0});
+        }
     }
 
     async MijozGet (req, res) {
@@ -85,6 +113,15 @@ class UserController extends UserController2 {
             return res.json(data1);
         } else {
             const data2 = await Mijoz.findAll({ where: { userId: user.id } });
+            for (let i = 0; i < data2.length; i++) {
+                data2[i].karz = 0;
+                await data2[i].save();
+                var sav = await Savdo.findAll({ where: { mijozId: data2[i].id }});
+                for (let p = 0; p < sav.length; p++) {
+                    data2[i].karz += parseFloat(sav[p].karz);
+                    await data2[i].save();
+                }
+            }
             return res.json(data2);
         }
     }
@@ -316,7 +353,9 @@ class UserController extends UserController2 {
                 plastik: req.body.plastik,
                 bank: req.body.bank,
                 karz: req.body.karz,
-                srok: req.body.srok
+                srok: req.body.srok,
+                valy: req.body.vname,
+                valyuta: req.body.vsumma,
             });
             for (let i = 0; i < req.body.local.length; i++) {
                 var tovar = await Tovar.findByPk(req.body.local[i].id);
@@ -327,26 +366,42 @@ class UserController extends UserController2 {
                     savdoId: savdo.id,
                     tovar: req.body.local[i].id,
                     name: req.body.local[i].name,
+                    olinish: req.body.local[i].olinish,
                     soni: req.body.local[i].soni,
                     sotilish: req.body.local[i].sotilish,
                     chegrma: req.body.local[i].chegirma,
                     jami: req.body.local[i].jami,
+                    valy: req.body.vname,
+                    valyuta: req.body.vsumma,
                 });
             }
         } else {
+            const savdo2 = await Savdo2.create({
+                userId: user.id,
+                sana: req.body.sana,
+                jamisumma: req.body.jamisum,
+                naqt: req.body.naqt,
+                plastik: req.body.plastik,
+                bank: req.body.bank,
+                valy: req.body.vname,
+                valyuta: req.body.vsumma,
+            });
             for (let i = 0; i < req.body.local.length; i++) {
                 var tovar = await Tovar.findByPk(req.body.local[i].id);
                 tovar.soni = tovar.soni - req.body.local[i].soni;
                 await tovar.save()
                 await Sotuv.create({
                     userId: user.id,
-                    savdoId: 0,
+                    savdo2Id: savdo2.id,
                     tovar: req.body.local[i].id,
                     name: req.body.local[i].name,
+                    olinish: req.body.local[i].olinish,
                     soni: req.body.local[i].soni,
                     sotilish: req.body.local[i].sotilish,
                     chegrma: req.body.local[i].chegirma,
                     jami: req.body.local[i].jami,
+                    valy: req.body.vname,
+                    valyuta: req.body.vsumma,
                 });
             }
         }

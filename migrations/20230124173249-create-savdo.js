@@ -36,6 +36,12 @@ module.exports = {
       srok: {
         type: Sequelize.STRING
       },
+      valy: {
+        type: Sequelize.STRING
+      },
+      valyuta: {
+        type: Sequelize.STRING
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE
