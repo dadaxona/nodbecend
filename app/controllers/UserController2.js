@@ -10,6 +10,7 @@ class UserController2 {
         var yet = 0;
         var sql = 0;
         var foyda = 0;
+        var mij = 0;
         const user = await User.findOne({ where: { login: req.body.login, token: req.body.token }});
         if (user) {            
             const savdo = await Savdo.findAll({ where: { userId: user.id }});
@@ -17,6 +18,7 @@ class UserController2 {
             const chiqim = await Chiqim.findAll({ where: { userId: user.id }});
             const yetkazuvchi = await Yetkazuvchi.findAll({ where: { userId: user.id }});
             const tovar = await Tovar.findAll({ where: { userId: user.id }});
+            const mijoz = await Mijoz.findAll({ where: { userId: user.id }});
             for (let i = 0; i < sotuv.length; i++) {
                 if (sotuv[i].valyuta == 1) {
                     sav += parseFloat(sotuv[i].jami);
@@ -47,7 +49,11 @@ class UserController2 {
                     sql += parseFloat(tovar[i5].olinish) * parseFloat(tovar[i5].soni);                    
                 }
             }
-            foyda = sav - qarz - chiq - ol;
+            for (let i6 = 0; i6 < mijoz.length; i6++) {
+                mij += parseFloat(mijoz[i6].summa); 
+                
+            }
+            foyda = sav - qarz - chiq - ol + mij;
             return res.json({ 'sav': sav, 'qarz': qarz, 'chiq': chiq, 'yet': yet, 'sql': sql, 'foyda': foyda })
         } else {
 
