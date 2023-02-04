@@ -50,8 +50,7 @@ class UserController2 {
                 }
             }
             for (let i6 = 0; i6 < mijoz.length; i6++) {
-                mij += parseFloat(mijoz[i6].summa); 
-                
+                mij += parseFloat(mijoz[i6].summa);
             }
             foyda = sav - qarz - chiq - ol + mij;
             return res.json({ 'sav': sav, 'qarz': qarz, 'chiq': chiq, 'yet': yet, 'sql': sql, 'foyda': foyda })

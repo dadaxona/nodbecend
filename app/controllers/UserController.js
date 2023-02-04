@@ -3,13 +3,7 @@ const { Op } = require("sequelize");
 const UserController2 = require('./UserController2');
 
 class UserController extends UserController2 {
-    
-    // async UserById (req, res) {
-    //     const userby = await User.findByPk(
-    //         req.body.id
-    //     );
-    //     return res.json({"user": userby})
-    // }
+
     async User_Get(req, res){
         const user = await User.findOne({ where: { login: req.body.login, token: req.body.token }});
         return res.json([user]);
@@ -19,9 +13,7 @@ class UserController extends UserController2 {
         const userby = await User.update(req.body, { where: { id: req.body.id } });
         if (userby) {
             return res.json(200);
-        } else {
-            
-        }
+        } else {}
     }
 
     async User_Del_Clear(req, res){
@@ -443,7 +435,11 @@ class UserController extends UserController2 {
         return res.json(200);
     }
     async Sotuv_Post_Id(req, res) {
-        const savdo = await Sotuv.findAll({ where: { savdoId: req.body.id }});
+        if (req.body.savdoId == 1) {
+            var savdo = await Sotuv.findAll({ where: { savdoId: req.body.id }});            
+        } else {
+            var savdo = await Sotuv.findAll({ where: { savdo2Id: req.body.id }});  
+        }
         return res.json(savdo);
     }
 }

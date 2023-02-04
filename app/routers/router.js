@@ -2,8 +2,6 @@ const { Router } = require('express')
 const UserController = require('../controllers/UserController')
 const route = Router()
 
-// route.post('/userbyid', UserController.UserById)
-
 route.post('/loginauth', UserController.Login)
 route.post('/register', UserController.Registration)
 route.post('/virfiy', UserController.Verifiy)
