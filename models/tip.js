@@ -19,8 +19,10 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Tip.init({
+    userId: DataTypes.INTEGER,
+    magazinId: DataTypes.INTEGER,
+    magazin: DataTypes.STRING,
     name: DataTypes.STRING,
-    userId: DataTypes.INTEGER
   }, {
     sequelize,
     modelName: 'Tip',

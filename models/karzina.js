@@ -15,6 +15,8 @@ module.exports = (sequelize, DataTypes) => {
   }
   Karzina.init({
     userId: DataTypes.INTEGER,
+    magazinId: DataTypes.INTEGER,
+    magazin: DataTypes.STRING,
     zaqazId: DataTypes.INTEGER,
     tovar: DataTypes.INTEGER,
     name: DataTypes.STRING,

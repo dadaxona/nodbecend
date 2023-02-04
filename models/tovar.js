@@ -15,6 +15,8 @@ module.exports = (sequelize, DataTypes) => {
   }
   Tovar.init({
     userId: DataTypes.INTEGER,
+    magazinId: DataTypes.INTEGER,
+    magazin: DataTypes.STRING,
     tip: DataTypes.STRING,
     adress: DataTypes.STRING,
     name: DataTypes.STRING,

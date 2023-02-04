@@ -17,6 +17,8 @@ module.exports = (sequelize, DataTypes) => {
   }
   Yetkazuvchi.init({
     userId: DataTypes.INTEGER,
+    magazinId: DataTypes.INTEGER,
+    magazin: DataTypes.STRING,
     name: DataTypes.STRING,
     summa: DataTypes.STRING
   }, {

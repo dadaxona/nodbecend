@@ -15,6 +15,8 @@ module.exports = (sequelize, DataTypes) => {
   }
   Sotuv.init({
     userId: DataTypes.INTEGER,
+    magazinId: DataTypes.INTEGER,
+    magazin: DataTypes.STRING,
     savdoId: DataTypes.INTEGER,
     savdo2Id: DataTypes.INTEGER,
     tovar: DataTypes.INTEGER,

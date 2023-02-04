@@ -15,6 +15,8 @@ module.exports = (sequelize, DataTypes) => {
   }
   Chiqim.init({
     userId: DataTypes.INTEGER,
+    magazinId: DataTypes.INTEGER,
+    magazin: DataTypes.STRING,
     qayerga: DataTypes.STRING,
     sabap: DataTypes.STRING,
     summa: DataTypes.STRING

@@ -15,6 +15,8 @@ module.exports = (sequelize, DataTypes) => {
   }
   Savdo2.init({
     userId: DataTypes.INTEGER,
+    magazinId: DataTypes.INTEGER,
+    magazin: DataTypes.STRING,
     sana: DataTypes.STRING,
     jamisumma: DataTypes.STRING,
     naqt: DataTypes.STRING,

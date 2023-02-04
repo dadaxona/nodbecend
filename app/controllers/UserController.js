@@ -1,4 +1,4 @@
-const { User, Tip, Tovar, Mijoz, Yetkazuvchi, Valyuta, Chiqim, Savdo, Sotuv, Karzina, Zaqaz, Savdo2 } = require('../../models');
+const { User, Tip, Tovar, Mijoz, Ishchilar, Yetkazuvchi, Valyuta, Chiqim, Savdo, Sotuv, Karzina, Zaqaz, Savdo2, Magazin } = require('../../models');
 const { Op } = require("sequelize");
 const UserController2 = require('./UserController2');
 
@@ -17,9 +17,20 @@ class UserController extends UserController2 {
     }
 
     async User_Del_Clear(req, res){
-        await User.destroy({
-            where: { id: req.body.id }
-        });
+        await Mijoz.destroy({ where: { userId: req.body.id } });
+        await Savdo.destroy({ where: { userId: req.body.id } });
+        await Savdo2.destroy({ where: { userId: req.body.id } });
+        await Zaqaz.destroy({ where: { userId: req.body.id } });
+        await Chiqim.destroy({ where: { userId: req.body.id } });
+        await Karzina.destroy({ where: { userId: req.body.id } });
+        await Magazin.destroy({ where: { userId: req.body.id } });
+        await Sotuv.destroy({ where: { userId: req.body.id } });
+        await Tip.destroy({ where: { userId: req.body.id } });
+        await Tovar.destroy({ where: { userId: req.body.id } });
+        await Yetkazuvchi.destroy({ where: { userId: req.body.id } });
+        await Valyuta.destroy({ where: { userId: req.body.id } });
+        await Ishchilar.destroy({ where: { userId: req.body.id } });
+        await User.destroy({ where: { id: req.body.id } });
         return res.json(200);
     }
 
@@ -40,7 +51,6 @@ class UserController extends UserController2 {
     }
 
     async Valyuta_Get (req, res) {
-
         const user = await User.findOne({ where: { login: req.body.login, token: req.body.token }});
         if (req.body.search) {      
             const data1 = await Valyuta.findAll({ where: { userId: user.id, [Op.or]: [{ name: {[ Op.iRegexp ]: req.body.search }}]}});
@@ -79,13 +89,20 @@ class UserController extends UserController2 {
     }
 
     async Login (req, res) {
-        const data = await User.findOne({  
-            where: { login: req.body.login, password: req.body.password }
-        });
-        if (data) {
-            return res.json({'code': 200, 'data': data});            
+        if (req.body.status == 1) {
+            const data1 = await Ishchilar.findOne({ where: { login: req.body.login, password: req.body.password } });
+             if (data1) {
+                return res.json({'code': 200, 'typ': 'ish', 'data': data1});            
+            } else {
+                return res.json({'code': 0});
+            }
         } else {
-            return res.json({'code': 0});
+            const data = await User.findOne({ where: { login: req.body.login, password: req.body.password } });
+            if (data) {
+                return res.json({'code': 200, 'typ': 'brend', 'data': data});            
+            } else {
+                return res.json({'code': 0});
+            }
         }
     }
 
@@ -441,6 +458,63 @@ class UserController extends UserController2 {
             var savdo = await Sotuv.findAll({ where: { savdo2Id: req.body.id }});  
         }
         return res.json(savdo);
+    }
+
+    async Foyda_Post(req, res){
+        var sav = 0;
+        var ol = 0;
+        var qarz = 0;
+        var chiq = 0;
+        var yet = 0;
+        var sql = 0;
+        var foyda = 0;
+        var mij = 0;
+        const user = await User.findOne({ where: { login: req.body.login, token: req.body.token }});
+        if (user) {            
+            const savdo = await Savdo.findAll({ where: { userId: user.id }});
+            const sotuv = await Sotuv.findAll({ where: { userId: user.id }});
+            const chiqim = await Chiqim.findAll({ where: { userId: user.id }});
+            const yetkazuvchi = await Yetkazuvchi.findAll({ where: { userId: user.id }});
+            const tovar = await Tovar.findAll({ where: { userId: user.id }});
+            const mijoz = await Mijoz.findAll({ where: { userId: user.id }});
+            for (let i = 0; i < sotuv.length; i++) {
+                if (sotuv[i].valyuta == 1) {
+                    sav += parseFloat(sotuv[i].jami);
+                } else {
+                    sav += parseFloat(sotuv[i].jami) * parseFloat(sotuv[i].valyuta);
+                }
+            }
+            for (let i0 = 0; i0 < sotuv.length; i0++) {
+                if (sotuv[i0].valyuta == 1) {
+                    ol += parseFloat(sotuv[i0].olinish) * parseFloat(sotuv[i0].soni);
+                } else {
+                    ol += parseFloat(sotuv[i0].olinish) * parseFloat(sotuv[i0].valyuta) * parseFloat(sotuv[i0].soni);
+                }
+            }
+            for (let i2 = 0; i2 < savdo.length; i2++) {
+                qarz += parseFloat(savdo[i2].karz);
+            }
+            for (let i3 = 0; i3 < chiqim.length; i3++) {
+                chiq += parseFloat(chiqim[i3].summa);
+            }
+            for (let i4 = 0; i4 < yetkazuvchi.length; i4++) {
+                yet += parseFloat(yetkazuvchi[i4].summa);
+            }
+            for (let i5 = 0; i5 < tovar.length; i5++) {
+                if (tovar[i5].valyuta) {
+                    sql += parseFloat(tovar[i5].olinish) * parseFloat(tovar[i5].summa) * parseFloat(tovar[i5].soni);   
+                } else {
+                    sql += parseFloat(tovar[i5].olinish) * parseFloat(tovar[i5].soni);                    
+                }
+            }
+            for (let i6 = 0; i6 < mijoz.length; i6++) {
+                mij += parseFloat(mijoz[i6].summa);
+            }
+            foyda = sav - qarz - chiq - ol + mij;
+            return res.json({ 'sav': sav, 'qarz': qarz, 'chiq': chiq, 'yet': yet, 'sql': sql, 'foyda': foyda })
+        } else {
+
+        }
     }
 }
 module.exports = new UserController();

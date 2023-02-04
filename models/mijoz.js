@@ -17,6 +17,8 @@ module.exports = (sequelize, DataTypes) => {
   }
   Mijoz.init({
     userId: DataTypes.INTEGER,
+    magazinId: DataTypes.INTEGER,
+    magazin: DataTypes.STRING,
     name: DataTypes.STRING,
     firma: DataTypes.STRING,
     tel: DataTypes.STRING,

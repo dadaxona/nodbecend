@@ -12,6 +12,12 @@ module.exports = {
       userId: {
         type: Sequelize.INTEGER
       },
+      magazinId: {
+        type: Sequelize.INTEGER
+      },
+      magazin: {
+        type: Sequelize.STRING
+      },
       savdoId: {
         type: Sequelize.INTEGER
       },

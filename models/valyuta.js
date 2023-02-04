@@ -15,6 +15,8 @@ module.exports = (sequelize, DataTypes) => {
   }
   Valyuta.init({
     userId: DataTypes.INTEGER,
+    magazinId: DataTypes.INTEGER,
+    magazin: DataTypes.STRING,
     name: DataTypes.STRING,
     summa: DataTypes.STRING
   }, {

@@ -2,7 +2,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('Savdos', {
+    await queryInterface.createTable('Ishchilars', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -12,40 +12,52 @@ module.exports = {
       userId: {
         type: Sequelize.INTEGER
       },
+      name: {
+        type: Sequelize.STRING
+      },
+      fam: {
+        type: Sequelize.STRING
+      },
+      tel: {
+        type: Sequelize.STRING
+      },
+      login: {
+        type: Sequelize.STRING
+      },
+      password: {
+        type: Sequelize.STRING
+      },
+      token: {
+        type: Sequelize.STRING
+      },
       magazinId: {
         type: Sequelize.INTEGER
       },
       magazin: {
         type: Sequelize.STRING
       },
-      mijozId: {
-        type: Sequelize.INTEGER
+      status: {
+        type: Sequelize.STRING
+      },
+      valyuta: {
+        type: Sequelize.STRING
+      },
+      tip: {
+        type: Sequelize.STRING
+      },
+      yetkazu: {
+        type: Sequelize.STRING
       },
       mijoz: {
         type: Sequelize.STRING
       },
-      jamisumma: {
+      sqlad: {
         type: Sequelize.STRING
       },
-      naqt: {
+      chiqim: {
         type: Sequelize.STRING
       },
-      plastik: {
-        type: Sequelize.STRING
-      },
-      bank: {
-        type: Sequelize.STRING
-      },
-      karz: {
-        type: Sequelize.STRING
-      },
-      srok: {
-        type: Sequelize.STRING
-      },
-      valy: {
-        type: Sequelize.STRING
-      },
-      valyuta: {
+      foyda: {
         type: Sequelize.STRING
       },
       createdAt: {
@@ -59,6 +71,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('Savdos');
+    await queryInterface.dropTable('Ishchilars');
   }
 };
