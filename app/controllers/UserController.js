@@ -227,7 +227,6 @@ class UserController extends UserController2 {
     }
 
     async Get_db(req, res) {
-
         const user = await User.findOne({ where: { login: req.body.login, token: req.body.token }});
         const data = await Tip.findAll({ where: { userId: user.id } });
         const data2 = await Yetkazuvchi.findAll({ where: { userId: user.id } });
@@ -274,6 +273,7 @@ class UserController extends UserController2 {
                 sotilish2: req.body.sotilish2,
                 valyuta: valu,
                 summa: valu2,
+                kod: req.body.kod
             });
         }
         return res.json(200);
