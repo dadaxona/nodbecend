@@ -35,18 +35,29 @@ class UserController extends UserController2 {
     }
 
     async Verifiy (req, res) {
-        const user = await User.findOne({ where: { login: req.body.login, token: req.body.token }});
-        if (user) {
-            const mijoz = await Mijoz.findAll({ where: { userId: { [Op.eq]: user.id }}});
-            const savdo = await Savdo.findAll({ where: { userId: user.id }});
-            const karz = await Savdo.findAll({ where: { userId: user.id , karz: { [Op.gt]: '0' }}});
-            const srok = await Savdo.findAll({ where: { userId: user.id , karz: { [Op.gt]: '0' }, srok: { [Op.lt]: req.body.date }}});
-            const savdo2 = await Savdo2.findAll({ where: { userId: user.id }});
-            const zaqaz = await Zaqaz.findAll({ where: { userId: user.id }});
-            const karzina = await Karzina.findAll({ where: { userId: user.id }});
-            return res.json({'code': 200, 'user':user, 'mijoz': mijoz, 'savdo': savdo, 'savdo2': savdo2, 'zaqaz': zaqaz, 'karz': karz, 'karzina': karzina, 'srok': srok});            
+        if (req.body.status == 'brend') {
+            const user = await User.findOne({ where: { login: req.body.login, token: req.body.token }});
+            if (user) {
+                const mijoz = await Mijoz.findAll({ where: { userId: { [Op.eq]: user.id }}});
+                const savdo = await Savdo.findAll({ where: { userId: user.id }});
+                const karz = await Savdo.findAll({ where: { userId: user.id , karz: { [Op.gt]: '0' }}});
+                const srok = await Savdo.findAll({ where: { userId: user.id , karz: { [Op.gt]: '0' }, srok: { [Op.lt]: req.body.date }}});
+                const savdo2 = await Savdo2.findAll({ where: { userId: user.id }});
+                const zaqaz = await Zaqaz.findAll({ where: { userId: user.id }});
+                const karzina = await Karzina.findAll({ where: { userId: user.id }});
+                const magazin = await Magazin.findAll({ where: { userId: user.id }});
+                return res.json({'code': 200, 'user':user, 'magazin': magazin, 'mijoz': mijoz, 'savdo': savdo, 'savdo2': savdo2, 'zaqaz': zaqaz, 'karz': karz, 'karzina': karzina, 'srok': srok});            
+            } else {
+                return res.json({'code': 0});
+            }
         } else {
-            return res.json({'code': 0});
+            const ish = await Ishchilar.findOne({ where: { login: req.body.login, token: req.body.token }});
+            const mag = await Magazin.findByPk(ish.magazinId);
+            if (mag) {
+                
+            } else {
+                return res.json({'code': 0});
+            }
         }
     }
 
@@ -113,6 +124,65 @@ class UserController extends UserController2 {
         } else {
             return res.json({'code': 0});
         }
+    }
+
+    async Magazin_Creat(req, res){
+        const user = await User.findOne({ where: { login: req.body.login, token: req.body.token }});
+        if (req.body.id) {
+            await Magazin.update({
+                name: req.body.name
+            },
+            {
+                where: { id: req.body.id }
+            });
+        } else {
+            await Magazin.create({
+                userId: user.id,
+                name: req.body.name
+            });
+        }
+        return res.json(200);
+    }
+
+    async Kassa_Get(req, register) {
+        const user = await User.findOne({ where: { login: req.body.login, token: req.body.token }});
+        const kassa = await Ishchilar.findAll({ where: { userId: user.id }});
+        return res.json(kassa);
+    }
+
+    async Kassa_Creat(req, res){
+        const user = await User.findOne({ where: { login: req.body.login, token: req.body.token }});
+        const magazin = await Magazin.findByPk(req.body.magazinId);
+        if (req.body.id) {
+            await Ishchilar.update({
+                name: req.body.name,
+                fam: req.body.fam,
+                tel: req.body.tel,
+                login: req.body.login2,
+                password: req.body.password,
+                token: req.body.token2,
+                status: req.body.status2,
+                magazinId: magazin.id,
+                magazin: magazin.name,
+            },
+            {
+                where: { id: req.body.id }
+            });
+        } else {
+            await Ishchilar.create({
+                userId: user.id,
+                name: req.body.name,
+                fam: req.body.fam,
+                tel: req.body.tel,
+                login: req.body.login2,
+                password: req.body.password,
+                token: req.body.token2,
+                status: req.body.status2,
+                magazinId: magazin.id,
+                magazin: magazin.name,
+            });
+        }
+        return res.json(200);
     }
 
     async MijozGet (req, res) {
