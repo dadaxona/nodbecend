@@ -53,17 +53,16 @@ class UserController extends UserController2 {
             }
         } else {
             const ish = await Ishchilar.findOne({ where: { login: req.body.login, token: req.body.token }});
-            const mag = await Magazin.findByPk(ish.magazinId);
-            if (mag) {
-                const mijoz = await Mijoz.findAll({ where: { magazinId: { [Op.eq]: mag.id }}});
-                const savdo = await Savdo.findAll({ where: { magazinId: mag.id }});
-                const karz = await Savdo.findAll({ where: { magazinId: mag.id , karz: { [Op.gt]: '0' }}});
-                const srok = await Savdo.findAll({ where: { magazinId: mag.id , karz: { [Op.gt]: '0' }, srok: { [Op.lt]: req.body.date }}});
-                const savdo2 = await Savdo2.findAll({ where: { magazinId: mag.id }});
-                const zaqaz = await Zaqaz.findAll({ where: { magazinId: mag.id }});
-                const karzina = await Karzina.findAll({ where: { magazinId: mag.id }});
-                const magazin = await Magazin.findAll({ where: { magazinId: mag.id }});
-                return res.json({'code': 200, 'user': mag, 'magazin': magazin, 'mijoz': mijoz, 'savdo': savdo, 'savdo2': savdo2, 'zaqaz': zaqaz, 'karz': karz, 'karzina': karzina, 'srok': srok});
+            if (ish) {
+                const mijoz = await Mijoz.findAll({ where: { magazinId: { [Op.eq]: ish.magazinId }}});
+                const savdo = await Savdo.findAll({ where: { magazinId: ish.magazinId }});
+                const karz = await Savdo.findAll({ where: { magazinId: ish.magazinId , karz: { [Op.gt]: '0' }}});
+                const srok = await Savdo.findAll({ where: { magazinId: ish.magazinId , karz: { [Op.gt]: '0' }, srok: { [Op.lt]: req.body.date }}});
+                const savdo2 = await Savdo2.findAll({ where: { magazinId: ish.magazinId }});
+                const zaqaz = await Zaqaz.findAll({ where: { magazinId: ish.magazinId }});
+                const karzina = await Karzina.findAll({ where: { magazinId: ish.magazinId }});
+                const magazin = await Magazin.findAll({ where: { id: ish.magazinId }});
+                return res.json({'code': 200, 'user': ish, 'magazin': magazin, 'mijoz': mijoz, 'savdo': savdo, 'savdo2': savdo2, 'zaqaz': zaqaz, 'karz': karz, 'karzina': karzina, 'srok': srok});
             } else {
                 return res.json({'code': 0});
             }
@@ -261,22 +260,42 @@ class UserController extends UserController2 {
     }
 
     async MijozGet (req, res) {
-        const user = await User.findOne({ where: { login: req.body.login, token: req.body.token }});
-        if (req.body.search) {      
-            const data1 = await Mijoz.findAll({ where: { userId: user.id, [Op.or]: [{ name: {[ Op.iRegexp ]: req.body.search }}]}});
-            return res.json(data1);
-        } else {
-            const data2 = await Mijoz.findAll({ where: { userId: user.id } });
-            for (let i = 0; i < data2.length; i++) {
-                data2[i].karz = 0;
-                await data2[i].save();
-                var sav = await Savdo.findAll({ where: { mijozId: data2[i].id }});
-                for (let p = 0; p < sav.length; p++) {
-                    data2[i].karz += parseFloat(sav[p].karz);
+        if (req.body.status == 'brend') {
+            const user = await User.findOne({ where: { login: req.body.login, token: req.body.token }});
+            if (req.body.search) {      
+                const data1 = await Mijoz.findAll({ where: { userId: user.id, [Op.or]: [{ name: {[ Op.iRegexp ]: req.body.search }}]}});
+                return res.json(data1);
+            } else {
+                const data2 = await Mijoz.findAll({ where: { userId: user.id } });
+                for (let i = 0; i < data2.length; i++) {
+                    data2[i].karz = 0;
                     await data2[i].save();
+                    var sav = await Savdo.findAll({ where: { mijozId: data2[i].id }});
+                    for (let p = 0; p < sav.length; p++) {
+                        data2[i].karz += parseFloat(sav[p].karz);
+                        await data2[i].save();
+                    }
                 }
+                return res.json(data2);
             }
-            return res.json(data2);
+        } else {
+            const user = await Ishchilar.findOne({ where: { login: req.body.login, token: req.body.token }});
+            if (req.body.search) {      
+                const data1 = await Mijoz.findAll({ where: { userId: user.userId, [Op.or]: [{ name: {[ Op.iRegexp ]: req.body.search }}]}});
+                return res.json(data1);
+            } else {
+                const data2 = await Mijoz.findAll({ where: { userId: user.userId } });
+                for (let i = 0; i < data2.length; i++) {
+                    data2[i].karz = 0;
+                    await data2[i].save();
+                    var sav = await Savdo.findAll({ where: { mijozId: data2[i].userId }});
+                    for (let p = 0; p < sav.length; p++) {
+                        data2[i].karz += parseFloat(sav[p].karz);
+                        await data2[i].save();
+                    }
+                }
+                return res.json(data2);
+            }
         }
     }
 
@@ -653,6 +672,7 @@ class UserController extends UserController2 {
                     userId: user.id,
                     magazinId: req.body.magazinId,
                     magazin: req.body.magazin,
+                    sotivchi: user.name,
                     qayerga: req.body.qayerga,
                     sabap: req.body.sabap,
                     summa: req.body.summa,
@@ -670,6 +690,7 @@ class UserController extends UserController2 {
                     userId: user.userId,
                     magazinId: req.body.magazinId,
                     magazin: req.body.magazin,
+                    sotivchi: user.name,
                     qayerga: req.body.qayerga,
                     sabap: req.body.sabap,
                     summa: req.body.summa,
@@ -720,6 +741,9 @@ class UserController extends UserController2 {
                 const savdo = await Savdo.create({
                     userId: user.id,
                     mijozId: mijoz.id,
+                    magazinId: req.body.magazinId,
+                    magazin: req.body.magazin,
+                    sotivchi: user.name,
                     mijoz: mijoz.name,
                     jamisumma: req.body.jamisum,
                     naqt: req.body.naqt,
@@ -737,6 +761,9 @@ class UserController extends UserController2 {
                     await Sotuv.create({
                         userId: user.id,
                         savdoId: savdo.id,
+                        magazinId: req.body.magazinId,
+                        magazin: req.body.magazin,
+                        sotivchi: user.name,
                         tovar: req.body.local[i].id,
                         name: req.body.local[i].name,
                         olinish: req.body.local[i].olinish,
@@ -751,6 +778,9 @@ class UserController extends UserController2 {
             } else {
                 const savdo2 = await Savdo2.create({
                     userId: user.id,
+                    magazinId: req.body.magazinId,
+                    magazin: req.body.magazin,
+                    sotivchi: user.name,
                     sana: req.body.sana,
                     jamisumma: req.body.jamisum,
                     naqt: req.body.naqt,
@@ -765,6 +795,9 @@ class UserController extends UserController2 {
                     await tovar.save()
                     await Sotuv.create({
                         userId: user.id,
+                        magazinId: req.body.magazinId,
+                        magazin: req.body.magazin,
+                        sotivchi: user.name,
                         savdo2Id: savdo2.id,
                         tovar: req.body.local[i].id,
                         name: req.body.local[i].name,
@@ -789,6 +822,7 @@ class UserController extends UserController2 {
                     userId: user.userId,
                     magazinId: req.body.magazinId,
                     magazin: req.body.magazin,
+                    sotivchi: user.name,
                     mijozId: mijoz.id,
                     mijoz: mijoz.name,
                     jamisumma: req.body.jamisum,
@@ -808,6 +842,7 @@ class UserController extends UserController2 {
                         userId: user.userId,
                         magazinId: req.body.magazinId,
                         magazin: req.body.magazin,
+                        sotivchi: user.name,
                         savdoId: savdo.id,
                         tovar: req.body.local[i].id,
                         name: req.body.local[i].name,
@@ -825,6 +860,7 @@ class UserController extends UserController2 {
                     userId: user.userId,
                     magazinId: req.body.magazinId,
                     magazin: req.body.magazin,
+                    sotivchi: user.name,
                     sana: req.body.sana,
                     jamisumma: req.body.jamisum,
                     naqt: req.body.naqt,
@@ -841,6 +877,7 @@ class UserController extends UserController2 {
                         userId: user.userId,
                         magazinId: req.body.magazinId,
                         magazin: req.body.magazin,
+                        sotivchi: user.name,
                         savdo2Id: savdo2.id,
                         tovar: req.body.local[i].id,
                         name: req.body.local[i].name,
@@ -863,11 +900,17 @@ class UserController extends UserController2 {
             const user = await User.findOne({ where: { login: req.body.login, token: req.body.token }});
             const zaqaz = await Zaqaz.create({
                 userId: user.id,
-                name: req.body.name
+                magazinId: req.body.magazinId,
+                magazin: req.body.magazin,
+                sotivchi: user.name,
+                name: req.body.name,
             });
             for (let i = 0; i < req.body.local.length; i++) {  
                 await Karzina.create({               
                     userId: user.id,
+                    magazinId: req.body.magazinId,
+                    magazin: req.body.magazin,
+                    sotivchi: user.name,
                     zaqazId: zaqaz.id,
                     tovar: req.body.local[i].id,
                     name: req.body.local[i].name,
@@ -884,6 +927,7 @@ class UserController extends UserController2 {
                 userId: user.userId,
                 magazinId: req.body.magazinId,
                 magazin: req.body.magazin,
+                sotivchi: user.name,
                 name: req.body.name
             });
             for (let i = 0; i < req.body.local.length; i++) {  
@@ -891,6 +935,7 @@ class UserController extends UserController2 {
                     userId: user.userId,
                     magazinId: req.body.magazinId,
                     magazin: req.body.magazin,
+                    sotivchi: user.name,
                     zaqazId: zaqaz.id,
                     tovar: req.body.local[i].id,
                     name: req.body.local[i].name,

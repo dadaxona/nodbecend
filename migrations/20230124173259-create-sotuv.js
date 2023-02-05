@@ -18,6 +18,9 @@ module.exports = {
       magazin: {
         type: Sequelize.STRING
       },
+      sotivchi: {
+        type: Sequelize.STRING
+      },
       savdoId: {
         type: Sequelize.INTEGER
       },

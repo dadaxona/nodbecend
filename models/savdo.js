@@ -19,6 +19,7 @@ module.exports = (sequelize, DataTypes) => {
     magazin: DataTypes.STRING,
     mijozId: DataTypes.INTEGER,
     mijoz: DataTypes.STRING,
+    sotivchi: DataTypes.STRING,
     jamisumma: DataTypes.STRING,
     naqt: DataTypes.STRING,
     plastik: DataTypes.STRING,
