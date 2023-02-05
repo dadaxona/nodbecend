@@ -31,6 +31,8 @@ route.post('/yetkaz_delete', UserController.Yetkaz_Delete)
 
 route.post('/getdb', UserController.Get_db)
 route.post('/sqlad_post_update', UserController.Sqlad)
+route.post('/update_key', UserController.Update_Key)
+route.post('/update_chang_val', UserController.Update_Chang_Val)
 route.post('/sqlad_delete', UserController.Sqlad_Delete)
 
 route.post('/chiqim_get', UserController.Chiqim_get)

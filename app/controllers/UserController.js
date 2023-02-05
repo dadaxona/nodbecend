@@ -632,6 +632,36 @@ class UserController extends UserController2 {
             return res.json(200);
         }
     }
+
+    async Update_Key (req, res) {
+        if (req.body.id) {
+            await Tovar.update(req.body, {
+                where: { id: req.body.id }
+            });
+        } else {}
+        return res.json(200);
+    }
+
+    async Update_Chang_Val (req, res) {
+        if (req.body.valyuta) {
+            const val = await Valyuta.findOne({ where: { magazinId: req.body.magazinId , name: req.body.valyuta } });
+            await Tovar.update({
+                valyuta: val.name,
+                summa: val.summa
+            }, {
+                where: { id: req.body.id }
+            });
+            return res.json(200);            
+        } else {
+            await Tovar.update({
+                valyuta: '',
+                summa: ''
+            }, {
+                where: { id: req.body.id }
+            });
+            return res.json(200);   
+        }
+    }
     
     async Sqlad_Delete(req, res){
         await Tovar.destroy({ where: { id: req.body.id } });
