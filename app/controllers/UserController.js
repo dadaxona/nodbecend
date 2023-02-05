@@ -380,6 +380,8 @@ class UserController extends UserController2 {
             if (req.body.id) {
                 await Tip.update({
                     name: req.body.name,
+                    magazinId: req.body.magazinId,
+                    magazin: req.body.magazin,
                     },
                     {
                     where: { id: req.body.id }
@@ -388,6 +390,8 @@ class UserController extends UserController2 {
                 const user = await User.findOne({ where: { login: req.body.login, token: req.body.token }});
                 await Tip.create({
                     userId: user.id,
+                    magazinId: req.body.magazinId,
+                    magazin: req.body.magazin,
                     name: req.body.name
                 });  
             }
