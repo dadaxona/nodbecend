@@ -81,7 +81,7 @@ class UserController extends UserController2 {
                 return res.json(data2);
             }
         } else {
-            if (req.body.search) {      
+            if (req.body.search) {
                 const data1 = await Valyuta.findAll({ where: { magazinId: req.body.magazinId, [Op.or]: [{ name: {[ Op.iRegexp ]: req.body.search }}]}});
                 return res.json(data1);
             } else {
@@ -96,6 +96,7 @@ class UserController extends UserController2 {
             if (req.body.id) {
                 await Valyuta.update({
                     magazinId: req.body.magazinId,
+                    magazin: req.body.magazin,
                     name: req.body.name,
                     summa: req.body.summa
                 },
@@ -107,6 +108,7 @@ class UserController extends UserController2 {
                 await Valyuta.create({
                     userId: user.id,
                     magazinId: req.body.magazinId,
+                    magazin: req.body.magazin,
                     name: req.body.name,
                     summa: req.body.summa
                 });
@@ -116,6 +118,7 @@ class UserController extends UserController2 {
             if (req.body.id) {
                 await Valyuta.update({
                     magazinId: req.body.magazinId,
+                    magazin: req.body.magazin,
                     name: req.body.name,
                     summa: req.body.summa
                 },
@@ -127,6 +130,7 @@ class UserController extends UserController2 {
                 await Valyuta.create({
                     userId: user.userId,
                     magazinId: req.body.magazinId,
+                    magazin: req.body.magazin,
                     name: req.body.name,
                     summa: req.body.summa
                 });
@@ -188,7 +192,7 @@ class UserController extends UserController2 {
         return res.json(200);
     }
 
-    async Kassa_Get(req, register) {
+    async Kassa_Get(req, res) {
         const user = await User.findOne({ where: { login: req.body.login, token: req.body.token }});
         const kassa = await Ishchilar.findAll({ where: { userId: user.id }});
         return res.json(kassa);
@@ -229,6 +233,33 @@ class UserController extends UserController2 {
         return res.json(200);
     }
 
+    async Role_Peremes (req, res) {
+        const ishchi = await Ishchilar.findByPk(req.body.id);
+        if (req.body.typ == 'val') {
+            ishchi.valyuta = req.body.typ2;
+            await ishchi.save();
+        } else if (req.body.typ == 'tip') {
+            ishchi.tip = req.body.typ2;
+            await ishchi.save();
+        } else if (req.body.typ == 'yet') {
+            ishchi.yetkazu = req.body.typ2;
+            await ishchi.save();
+        } else if (req.body.typ == 'mij') {
+            ishchi.mijoz = req.body.typ2;
+            await ishchi.save();
+        } else if (req.body.typ == 'chiq') {
+            ishchi.chiqim = req.body.typ2;
+            await ishchi.save();
+        } else if (req.body.typ == 'sql') {
+            ishchi.sqlad = req.body.typ2;
+            await ishchi.save();
+        } else if (req.body.typ == 'foy') {
+            ishchi.foyda = req.body.typ2;
+            await ishchi.save();
+        } else {}
+        return res.json(200);
+    }
+
     async MijozGet (req, res) {
         const user = await User.findOne({ where: { login: req.body.login, token: req.body.token }});
         if (req.body.search) {      
@@ -254,6 +285,7 @@ class UserController extends UserController2 {
             if (req.body.id) {
                 await Mijoz.update({
                     magazinId: req.body.magazinId,
+                    magazin: req.body.magazin,
                     name: req.body.name,
                     firma: req.body.firma,
                     tel: req.body.tel,
@@ -270,6 +302,7 @@ class UserController extends UserController2 {
                 const data = await Mijoz.create({
                     userId: user.id,
                     magazinId: req.body.magazinId,
+                    magazin: req.body.magazin,
                     name: req.body.name,
                     firma: req.body.firma,
                     tel: req.body.tel,
@@ -283,6 +316,7 @@ class UserController extends UserController2 {
             if (req.body.id) {
                 await Mijoz.update({
                     magazinId: req.body.magazinId,
+                    magazin: req.body.magazin,
                     name: req.body.name,
                     firma: req.body.firma,
                     tel: req.body.tel,
@@ -299,6 +333,7 @@ class UserController extends UserController2 {
                 const data = await Mijoz.create({
                     userId: user.userId,
                     magazinId: req.body.magazinId,
+                    magazin: req.body.magazin,
                     name: req.body.name,
                     firma: req.body.firma,
                     tel: req.body.tel,
@@ -361,6 +396,7 @@ class UserController extends UserController2 {
             if (req.body.id) {
                 await Tip.update({
                     magazinId: req.body.magazinId,
+                    magazin: req.body.magazin,
                     name: req.body.name,
                     },
                     {
@@ -371,6 +407,7 @@ class UserController extends UserController2 {
                 await Tip.create({
                     userId: user.userId,
                     magazinId: req.body.magazinId,
+                    magazin: req.body.magazin,
                     name: req.body.name
                 });  
             }
@@ -411,6 +448,7 @@ class UserController extends UserController2 {
             if (req.body.id) {
                 await Yetkazuvchi.update({
                     magazinId: req.body.magazinId,
+                    magazin: req.body.magazin,
                     name: req.body.name,
                     summa: req.body.summa,
                     },
@@ -424,6 +462,7 @@ class UserController extends UserController2 {
                 await Yetkazuvchi.create({
                     userId: user.id,
                     magazinId: req.body.magazinId,
+                    magazin: req.body.magazin,
                     name: req.body.name,
                     summa: req.body.summa
                 });  
@@ -433,6 +472,7 @@ class UserController extends UserController2 {
             if (req.body.id) {
                 await Yetkazuvchi.update({
                     magazinId: req.body.magazinId,
+                    magazin: req.body.magazin,
                     name: req.body.name,
                     summa: req.body.summa,
                     },
@@ -446,6 +486,7 @@ class UserController extends UserController2 {
                 await Yetkazuvchi.create({
                     userId: user.userId,
                     magazinId: req.body.magazinId,
+                    magazin: req.body.magazin,
                     name: req.body.name,
                     summa: req.body.summa
                 });  
@@ -512,6 +553,7 @@ class UserController extends UserController2 {
                 await Tovar.create({
                     userId: user.id,
                     magazinId: req.body.magazinId,
+                    magazin: req.body.magazin,
                     tip: req.body.tip,
                     adress: req.body.adress,
                     name: req.body.name,
@@ -550,6 +592,7 @@ class UserController extends UserController2 {
                 await Tovar.create({
                     userId: user.userId,
                     magazinId: req.body.magazinId,
+                    magazin: req.body.magazin,
                     tip: req.body.tip,
                     adress: req.body.adress,
                     name: req.body.name,
@@ -605,6 +648,7 @@ class UserController extends UserController2 {
                 await Chiqim.create({
                     userId: user.id,
                     magazinId: req.body.magazinId,
+                    magazin: req.body.magazin,
                     qayerga: req.body.qayerga,
                     sabap: req.body.sabap,
                     summa: req.body.summa,
@@ -621,6 +665,7 @@ class UserController extends UserController2 {
                 await Chiqim.create({
                     userId: user.userId,
                     magazinId: req.body.magazinId,
+                    magazin: req.body.magazin,
                     qayerga: req.body.qayerga,
                     sabap: req.body.sabap,
                     summa: req.body.summa,
@@ -739,6 +784,7 @@ class UserController extends UserController2 {
                 const savdo = await Savdo.create({
                     userId: user.userId,
                     magazinId: req.body.magazinId,
+                    magazin: req.body.magazin,
                     mijozId: mijoz.id,
                     mijoz: mijoz.name,
                     jamisumma: req.body.jamisum,
@@ -757,6 +803,7 @@ class UserController extends UserController2 {
                     await Sotuv.create({
                         userId: user.userId,
                         magazinId: req.body.magazinId,
+                        magazin: req.body.magazin,
                         savdoId: savdo.id,
                         tovar: req.body.local[i].id,
                         name: req.body.local[i].name,
@@ -773,6 +820,7 @@ class UserController extends UserController2 {
                 const savdo2 = await Savdo2.create({
                     userId: user.userId,
                     magazinId: req.body.magazinId,
+                    magazin: req.body.magazin,
                     sana: req.body.sana,
                     jamisumma: req.body.jamisum,
                     naqt: req.body.naqt,
@@ -788,6 +836,7 @@ class UserController extends UserController2 {
                     await Sotuv.create({
                         userId: user.userId,
                         magazinId: req.body.magazinId,
+                        magazin: req.body.magazin,
                         savdo2Id: savdo2.id,
                         tovar: req.body.local[i].id,
                         name: req.body.local[i].name,
@@ -830,12 +879,14 @@ class UserController extends UserController2 {
             const zaqaz = await Zaqaz.create({
                 userId: user.userId,
                 magazinId: req.body.magazinId,
+                magazin: req.body.magazin,
                 name: req.body.name
             });
             for (let i = 0; i < req.body.local.length; i++) {  
                 await Karzina.create({               
                     userId: user.userId,
                     magazinId: req.body.magazinId,
+                    magazin: req.body.magazin,
                     zaqazId: zaqaz.id,
                     tovar: req.body.local[i].id,
                     name: req.body.local[i].name,
