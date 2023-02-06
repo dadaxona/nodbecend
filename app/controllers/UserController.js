@@ -1008,8 +1008,8 @@ class UserController extends UserController2 {
         var sql = 0;
         var foyda = 0;
         var mij = 0;
-        const user = await User.findOne({ where: { login: req.body.login, token: req.body.token }});
-        if (user) {            
+        // const user = await User.findOne({ where: { login: req.body.login, token: req.body.token }});
+        // if (user) {            
             const savdo = await Savdo.findAll({ where: { magazinId: req.body.magazinId }});
             const sotuv = await Sotuv.findAll({ where: { magazinId: req.body.magazinId }});
             const chiqim = await Chiqim.findAll({ where: { magazinId: req.body.magazinId }});
@@ -1051,9 +1051,9 @@ class UserController extends UserController2 {
             }
             foyda = sav - qarz - chiq - ol + mij;
             return res.json({ 'sav': sav, 'qarz': qarz, 'chiq': chiq, 'yet': yet, 'sql': sql, 'foyda': foyda })
-        } else {
+        // } else {
 
-        }
+        // }
     }
 }
 module.exports = new UserController();
