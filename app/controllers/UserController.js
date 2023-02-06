@@ -38,18 +38,23 @@ class UserController extends UserController2 {
     async Verifiy (req, res) {
         if (req.body.status == 'brend') {
             const user = await User.findOne({ where: { login: req.body.login, token: req.body.token }});
-            if (user) {
-                const mijoz = await Mijoz.findAll({ where: { userId: { [Op.eq]: user.id }}});
-                const savdo = await Savdo.findAll({ where: { userId: user.id }});
-                const karz = await Savdo.findAll({ where: { userId: user.id , karz: { [Op.gt]: '0' }}});
-                const srok = await Savdo.findAll({ where: { userId: user.id , karz: { [Op.gt]: '0' }, srok: { [Op.lt]: req.body.date }}});
-                const savdo2 = await Savdo2.findAll({ where: { userId: user.id }});
-                const zaqaz = await Zaqaz.findAll({ where: { userId: user.id }});
-                const karzina = await Karzina.findAll({ where: { userId: user.id }});
-                const magazin = await Magazin.findAll({ where: { userId: user.id }});
-                return res.json({'code': 200, 'user': user, 'magazin': magazin, 'mijoz': mijoz, 'savdo': savdo, 'savdo2': savdo2, 'zaqaz': zaqaz, 'karz': karz, 'karzina': karzina, 'srok': srok});
+            if (req.body.magazinId) {
+                if (user) {
+                    const mijoz = await Mijoz.findAll({ where: { magazinId: { [Op.eq]: req.body.magazinId }}});
+                    const savdo = await Savdo.findAll({ where: { magazinId: req.body.magazinId }});
+                    const karz = await Savdo.findAll({ where: { magazinId: req.body.magazinId , karz: { [Op.gt]: '0' }}});
+                    const srok = await Savdo.findAll({ where: { magazinId: req.body.magazinId , karz: { [Op.gt]: '0' }, srok: { [Op.lt]: req.body.date }}});
+                    const savdo2 = await Savdo2.findAll({ where: { magazinId: req.body.magazinId }});
+                    const zaqaz = await Zaqaz.findAll({ where: { magazinId: req.body.magazinId }});
+                    const karzina = await Karzina.findAll({ where: { magazinId: req.body.magazinId }});
+                    const magazin = await Magazin.findAll({ where: { userId: user.id }});
+                    return res.json({'code': 200, 'user': user, 'magazin': magazin, 'mijoz': mijoz, 'savdo': savdo, 'savdo2': savdo2, 'zaqaz': zaqaz, 'karz': karz, 'karzina': karzina, 'srok': srok});
+                } else {
+                    return res.json({'code': 0});
+                }                
             } else {
-                return res.json({'code': 0});
+                const magazin = await Magazin.findAll({ where: { userId: user.id }});
+                return res.json({'code': 200, 'user': user, 'magazin': magazin, 'mijoz': [], 'savdo': [], 'savdo2': [], 'zaqaz': [], 'karz': [], 'karzina': [], 'srok': []});
             }
         } else {
             const ish = await Ishchilar.findOne({ where: { login: req.body.login, token: req.body.token }});
@@ -71,12 +76,11 @@ class UserController extends UserController2 {
 
     async Valyuta_Get (req, res) {
         if (req.body.status == 'brend') {
-            const user = await User.findOne({ where: { login: req.body.login, token: req.body.token }});
             if (req.body.search) {      
-                const data1 = await Valyuta.findAll({ where: { userId: user.id, [Op.or]: [{ name: {[ Op.iRegexp ]: req.body.search }}]}});
+                const data1 = await Valyuta.findAll({ where: { magazinId: req.body.magazinId, [Op.or]: [{ name: {[ Op.iRegexp ]: req.body.search }}]}});
                 return res.json(data1);
             } else {
-                const data2 = await Valyuta.findAll({ where: { userId: user.id } });
+                const data2 = await Valyuta.findAll({ where: { magazinId: req.body.magazinId } });
                 return res.json(data2);
             }
         } else {
@@ -261,12 +265,11 @@ class UserController extends UserController2 {
 
     async MijozGet (req, res) {
         if (req.body.status == 'brend') {
-            const user = await User.findOne({ where: { login: req.body.login, token: req.body.token }});
             if (req.body.search) {      
-                const data1 = await Mijoz.findAll({ where: { userId: user.id, [Op.or]: [{ name: {[ Op.iRegexp ]: req.body.search }}]}});
+                const data1 = await Mijoz.findAll({ where: { magazinId: req.body.magazinId, [Op.or]: [{ name: {[ Op.iRegexp ]: req.body.search }}]}});
                 return res.json(data1);
             } else {
-                const data2 = await Mijoz.findAll({ where: { userId: user.id } });
+                const data2 = await Mijoz.findAll({ where: { magazinId: req.body.magazinId } });
                 for (let i = 0; i < data2.length; i++) {
                     data2[i].karz = 0;
                     await data2[i].save();
@@ -318,7 +321,7 @@ class UserController extends UserController2 {
                 const user = await User.findOne({  
                     where: { login: req.body.login, token: req.body.token }
                 });
-                const data = await Mijoz.create({
+                await Mijoz.create({
                     userId: user.id,
                     magazinId: req.body.magazinId,
                     magazin: req.body.magazin,
@@ -349,7 +352,7 @@ class UserController extends UserController2 {
                 const user = await Ishchilar.findOne({  
                     where: { login: req.body.login, token: req.body.token }
                 });
-                const data = await Mijoz.create({
+                await Mijoz.create({
                     userId: user.userId,
                     magazinId: req.body.magazinId,
                     magazin: req.body.magazin,
@@ -374,12 +377,11 @@ class UserController extends UserController2 {
 
     async Gettip (req, res) {
         if (req.body.status == 'brend') {
-            const user = await User.findOne({ where: { login: req.body.login, token: req.body.token }});
             if (req.body.search) {      
-                const data1 = await Tip.findAll({ where: { userId: user.id, [Op.or]: [{ name: {[ Op.iRegexp ]: req.body.search }}]}});
+                const data1 = await Tip.findAll({ where: { magazinId: req.body.magazinId, [Op.or]: [{ name: {[ Op.iRegexp ]: req.body.search }}]}});
                 return res.json(data1);
             } else {
-                const data2 = await Tip.findAll({ where: { userId: user.id } });
+                const data2 = await Tip.findAll({ where: { magazinId: req.body.magazinId } });
                 return res.json(data2);
             }
         } else {
@@ -445,12 +447,11 @@ class UserController extends UserController2 {
 
     async Getyetkaz(req, res) {
         if (req.body.status == 'brend') {
-            const user = await User.findOne({ where: { login: req.body.login, token: req.body.token }});
             if (req.body.search) {      
-                const data1 = await Yetkazuvchi.findAll({ where: { userId: user.id, [Op.or]: [{ name: {[ Op.iRegexp ]: req.body.search }}]}});
+                const data1 = await Yetkazuvchi.findAll({ where: {magazinId: req.body.magazinId, [Op.or]: [{ name: {[ Op.iRegexp ]: req.body.search }}]}});
                 return res.json(data1);
             } else {
-                const data2 = await Yetkazuvchi.findAll({ where: { userId: user.id } });
+                const data2 = await Yetkazuvchi.findAll({ where: {magazinId: req.body.magazinId } });
                 return res.json(data2);
             }
         } else {
@@ -525,13 +526,12 @@ class UserController extends UserController2 {
 
     async Get_db(req, res) {
         if (req.body.status == 'brend') {
-            const user = await User.findOne({ where: { login: req.body.login, token: req.body.token }});
-            const data = await Tip.findAll({ where: { userId: user.id } });
-            const data2 = await Yetkazuvchi.findAll({ where: { userId: user.id } });
-            const data3 = await Tovar.findAll({ where: { userId: user.id } });
-            const data4 = await Valyuta.findAll({ where: { userId: user.id } });
+            const data = await Tip.findAll({ where: { magazinId: req.body.magazinId } });
+            const data2 = await Yetkazuvchi.findAll({ where: { magazinId: req.body.magazinId } });
+            const data3 = await Tovar.findAll({ where: { magazinId: req.body.magazinId } });
+            const data4 = await Valyuta.findAll({ where: { magazinId: req.body.magazinId } });
             if (req.body.search) {      
-                const data1 = await Tovar.findAll({ where: { userId: user.id, [Op.or]: [{ name: {[ Op.iRegexp ]: req.body.search }}]}});
+                const data1 = await Tovar.findAll({ where: { magazinId: req.body.magazinId, [Op.or]: [{ name: {[ Op.iRegexp ]: req.body.search }}]}});
                 return res.json({'data': data, 'data2': data2, 'data3': data1, 'data4': data4});
             } else {
                 return res.json({'data': data, 'data2': data2, 'data3': data3, 'data4': data4});
@@ -670,12 +670,11 @@ class UserController extends UserController2 {
 
     async Chiqim_get(req, res){
         if (req.body.status == 'brend') {
-            const user = await User.findOne({ where: { login: req.body.login, token: req.body.token }});
             if (req.body.search) {      
-                const data1 = await Chiqim.findAll({ where: { userId: user.id, [Op.or]: [{ qayerga: {[ Op.iRegexp ]: req.body.search }}]}});
+                const data1 = await Chiqim.findAll({ where: { magazinId: req.body.magazinId, [Op.or]: [{ qayerga: {[ Op.iRegexp ]: req.body.search }}]}});
                 return res.json(data1);
             } else {
-                const data2 = await Chiqim.findAll({ where: { userId: user.id } });
+                const data2 = await Chiqim.findAll({ where: { magazinId: req.body.magazinId } });
                 return res.json(data2);
             }
         } else {
@@ -737,14 +736,13 @@ class UserController extends UserController2 {
 
     async Live_Search(req, res){
         if (req.body.status == 'brend') {
-            const user = await User.findOne({ where: { login: req.body.login, token: req.body.token }});
-            const data4 = await Valyuta.findAll({ where: { userId: user.id } });
-            const data5 = await Mijoz.findAll({ where: { userId: user.id } });
+            const data4 = await Valyuta.findAll({ where: { magazinId: req.body.magazinId } });
+            const data5 = await Mijoz.findAll({ where: { magazinId: req.body.magazinId } });
             if (req.body.search) {      
-                const data1 = await Tovar.findAll({ where: { userId: user.id, [Op.or]: [{ name: {[ Op.iRegexp ]: req.body.search }}]}});
+                const data1 = await Tovar.findAll({ where: { magazinId: req.body.magazinId, [Op.or]: [{ name: {[ Op.iRegexp ]: req.body.search }}]}});
                 return res.json({'data2': data1, 'data4': data4});
             } else {
-                const data2 = await Tovar.findAll({ where: { userId: user.id } });
+                const data2 = await Tovar.findAll({ where: { magazinId: req.body.magazinId } });
                 return res.json({'data2': data2, 'data4': data4, 'data5': data5});
             }
         } else {
@@ -1012,12 +1010,12 @@ class UserController extends UserController2 {
         var mij = 0;
         const user = await User.findOne({ where: { login: req.body.login, token: req.body.token }});
         if (user) {            
-            const savdo = await Savdo.findAll({ where: { userId: user.id }});
-            const sotuv = await Sotuv.findAll({ where: { userId: user.id }});
-            const chiqim = await Chiqim.findAll({ where: { userId: user.id }});
-            const yetkazuvchi = await Yetkazuvchi.findAll({ where: { userId: user.id }});
-            const tovar = await Tovar.findAll({ where: { userId: user.id }});
-            const mijoz = await Mijoz.findAll({ where: { userId: user.id }});
+            const savdo = await Savdo.findAll({ where: { magazinId: req.body.magazinId }});
+            const sotuv = await Sotuv.findAll({ where: { magazinId: req.body.magazinId }});
+            const chiqim = await Chiqim.findAll({ where: { magazinId: req.body.magazinId }});
+            const yetkazuvchi = await Yetkazuvchi.findAll({ where: { magazinId: req.body.magazinId }});
+            const tovar = await Tovar.findAll({ where: { magazinId: req.body.magazinId }});
+            const mijoz = await Mijoz.findAll({ where: { magazinId: req.body.magazinId }});
             for (let i = 0; i < sotuv.length; i++) {
                 if (sotuv[i].valyuta == 1) {
                     sav += parseFloat(sotuv[i].jami);
