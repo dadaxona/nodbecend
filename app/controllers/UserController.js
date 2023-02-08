@@ -299,14 +299,14 @@ class UserController extends UserController2 {
         } else {
             const user = await Ishchilar.findOne({ where: { login: req.body.login, token: req.body.token }});
             if (req.body.search) {      
-                const data1 = await Mijoz.findAll({ where: { userId: user.userId, [Op.or]: [{ name: {[ Op.iRegexp ]: req.body.search }}]}});
+                const data1 = await Mijoz.findAll({ where: { magazinId: user.magazinId, [Op.or]: [{ name: {[ Op.iRegexp ]: req.body.search }}]}});
                 return res.json(data1);
             } else {
-                const data2 = await Mijoz.findAll({ where: { userId: user.userId } });
+                const data2 = await Mijoz.findAll({ where: { magazinId: user.magazinId } });
                 for (let i = 0; i < data2.length; i++) {
                     data2[i].karz = 0;
                     await data2[i].save();
-                    var sav = await Savdo.findAll({ where: { mijozId: data2[i].userId }});
+                    var sav = await Savdo.findAll({ where: { magazinId: data2[i].magazinId }});
                     for (let p = 0; p < sav.length; p++) {
                         data2[i].karz += parseFloat(sav[p].karz);
                         await data2[i].save();
