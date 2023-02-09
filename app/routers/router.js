@@ -48,4 +48,12 @@ route.post('/zaqaz_delet', UserController.Zaqaz_Delet)
 route.post('/sotuv_post_id', UserController.Sotuv_Post_Id)
 route.post('/foyda_post', UserController.Foyda_Post)
 
+
+route.post('/post_tip_exsel', UserController.Post_Tip_Exsel)
+route.post('/post_update_exsel', UserController.Post_Update_Exsel)
+route.post('/post_update_yetkaz_exsel', UserController.Post_update_yetkaz_exsel)
+route.post('/post_update_mijoz_exsel', UserController.Post_update_mijoz_exsel)
+route.post('/post_update_sqlad_exsel', UserController.Post_update_sqlad_exsel)
+route.post('/post_update_chiqim_exsel', UserController.Post_update_chiqim_exsel)
+
 module.exports = route
