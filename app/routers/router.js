@@ -47,6 +47,8 @@ route.post('/tolovpost', UserController.Tolov_Post)
 route.post('/zaqaz_delet', UserController.Zaqaz_Delet)
 route.post('/sotuv_post_id', UserController.Sotuv_Post_Id)
 route.post('/foyda_post', UserController.Foyda_Post)
+// Torgosoft
+route.post('/serchtor_live', UserController.Serchtor_live)
 
 
 route.post('/post_tip_exsel', UserController.Post_Tip_Exsel)
