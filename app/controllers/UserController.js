@@ -1,4 +1,4 @@
-const { User, Tip, Tovar, Mijoz, Ishchilar, Yetkazuvchi, Valyuta, Chiqim, Savdo, Sotuv, Karzina, Zaqaz, Savdo2, Magazin } = require('../../models');
+const { User, Tip, Tovar, Mijoz, Ishchilar, Yetkazuvchi, Valyuta, Chiqim, Savdo, Sotuv, Karzina, Zaqaz, Magazin } = require('../../models');
 const { Op } = require("sequelize");
 const UserController2 = require('./UserController2');
 const e = require('express');
@@ -20,7 +20,6 @@ class UserController extends UserController2 {
     async User_Del_Clear(req, res){
         await Mijoz.destroy({ where: { userId: req.body.id } });
         await Savdo.destroy({ where: { userId: req.body.id } });
-        await Savdo2.destroy({ where: { userId: req.body.id } });
         await Zaqaz.destroy({ where: { userId: req.body.id } });
         await Chiqim.destroy({ where: { userId: req.body.id } });
         await Karzina.destroy({ where: { userId: req.body.id } });
@@ -44,11 +43,10 @@ class UserController extends UserController2 {
                     const savdo = await Savdo.findAll({ where: { magazinId: req.body.magazinId }});
                     const karz = await Savdo.findAll({ where: { magazinId: req.body.magazinId , karz: { [Op.gt]: '0' }}});
                     const srok = await Savdo.findAll({ where: { magazinId: req.body.magazinId , karz: { [Op.gt]: '0' }, srok: { [Op.lt]: req.body.date }}});
-                    const savdo2 = await Savdo2.findAll({ where: { magazinId: req.body.magazinId }});
                     const zaqaz = await Zaqaz.findAll({ where: { magazinId: req.body.magazinId }});
                     const karzina = await Karzina.findAll({ where: { magazinId: req.body.magazinId }});
                     const magazin = await Magazin.findAll({ where: { userId: user.id }});
-                    return res.json({'code': 200, 'user': user, 'magazin': magazin, 'mijoz': mijoz, 'savdo': savdo, 'savdo2': savdo2, 'zaqaz': zaqaz, 'karz': karz, 'karzina': karzina, 'srok': srok});
+                    return res.json({'code': 200, 'user': user, 'magazin': magazin, 'mijoz': mijoz, 'savdo': savdo, 'zaqaz': zaqaz, 'karz': karz, 'karzina': karzina, 'srok': srok});
                 } else {
                     return res.json({'code': 0});
                 }                
@@ -63,11 +61,10 @@ class UserController extends UserController2 {
                 const savdo = await Savdo.findAll({ where: { magazinId: ish.magazinId }});
                 const karz = await Savdo.findAll({ where: { magazinId: ish.magazinId , karz: { [Op.gt]: '0' }}});
                 const srok = await Savdo.findAll({ where: { magazinId: ish.magazinId , karz: { [Op.gt]: '0' }, srok: { [Op.lt]: req.body.date }}});
-                const savdo2 = await Savdo2.findAll({ where: { magazinId: ish.magazinId }});
                 const zaqaz = await Zaqaz.findAll({ where: { magazinId: ish.magazinId }});
                 const karzina = await Karzina.findAll({ where: { magazinId: ish.magazinId }});
                 const magazin = await Magazin.findAll({ where: { id: ish.magazinId }});
-                return res.json({'code': 200, 'user': ish, 'magazin': magazin, 'mijoz': mijoz, 'savdo': savdo, 'savdo2': savdo2, 'zaqaz': zaqaz, 'karz': karz, 'karzina': karzina, 'srok': srok});
+                return res.json({'code': 200, 'user': ish, 'magazin': magazin, 'mijoz': mijoz, 'savdo': savdo, 'zaqaz': zaqaz, 'karz': karz, 'karzina': karzina, 'srok': srok});
             } else {
                 return res.json({'code': 0});
             }
@@ -328,6 +325,8 @@ class UserController extends UserController2 {
                     tel: req.body.tel,
                     telegram: req.body.telegram,
                     summa: req.body.summa,
+                    kurs: req.body.kurs,
+                    valyuta: req.body.valyuta,
                 },
                 {
                     where: { id: req.body.id }
@@ -345,7 +344,9 @@ class UserController extends UserController2 {
                     tel: req.body.tel,
                     telegram: req.body.telegram,
                     summa: req.body.summa,
-                    karz: 0
+                    karz: 0,
+                    kurs: req.body.kurs,
+                    valyuta: req.body.valyuta,
                 });
             }
             return res.json(200);
@@ -359,6 +360,8 @@ class UserController extends UserController2 {
                     tel: req.body.tel,
                     telegram: req.body.telegram,
                     summa: req.body.summa,
+                    kurs: req.body.kurs,
+                    valyuta: req.body.valyuta,
                 },
                 {
                     where: { id: req.body.id }
@@ -376,7 +379,9 @@ class UserController extends UserController2 {
                     tel: req.body.tel,
                     telegram: req.body.telegram,
                     summa: req.body.summa,
-                    karz: 0
+                    karz: 0,
+                    kurs: req.body.kurs,
+                    valyuta: req.body.valyuta,
                 });
             }
             return res.json(200);
@@ -490,6 +495,8 @@ class UserController extends UserController2 {
                     magazin: req.body.magazin,
                     name: req.body.name,
                     summa: req.body.summa,
+                    kurs: req.body.kurs,
+                    valyuta: req.body.valyuta,
                     },
                     {
                     where: { id: req.body.id }
@@ -503,7 +510,9 @@ class UserController extends UserController2 {
                     magazinId: req.body.magazinId,
                     magazin: req.body.magazin,
                     name: req.body.name,
-                    summa: req.body.summa
+                    summa: req.body.summa,
+                    kurs: req.body.kurs,
+                    valyuta: req.body.valyuta,
                 });  
             }
             return res.json(200);
@@ -514,6 +523,8 @@ class UserController extends UserController2 {
                     magazin: req.body.magazin,
                     name: req.body.name,
                     summa: req.body.summa,
+                    kurs: req.body.kurs,
+                    valyuta: req.body.valyuta,
                     },
                     {
                     where: { id: req.body.id }
@@ -527,7 +538,9 @@ class UserController extends UserController2 {
                     magazinId: req.body.magazinId,
                     magazin: req.body.magazin,
                     name: req.body.name,
-                    summa: req.body.summa
+                    summa: req.body.summa,
+                    kurs: req.body.kurs,
+                    valyuta: req.body.valyuta,
                 });  
             }
             return res.json(200);
@@ -720,6 +733,8 @@ class UserController extends UserController2 {
                     qayerga: req.body.qayerga,
                     sabap: req.body.sabap,
                     summa: req.body.summa,
+                    kurs: req.body.kurs,
+                    valyuta: req.body.valyuta,
                 });
             }
             return res.json(200);
@@ -738,6 +753,8 @@ class UserController extends UserController2 {
                     qayerga: req.body.qayerga,
                     sabap: req.body.sabap,
                     summa: req.body.summa,
+                    kurs: req.body.kurs,
+                    valyuta: req.body.valyuta,
                 });
             }
             return res.json(200);
@@ -794,7 +811,7 @@ class UserController extends UserController2 {
                     bank: req.body.bank,
                     karz: req.body.karz,
                     srok: req.body.srok,
-                    valy: req.body.vname,
+                    kurs: req.body.vname,
                     valyuta: req.body.vsumma,
                 });
                 for (let i = 0; i < req.body.local.length; i++) {
@@ -809,27 +826,32 @@ class UserController extends UserController2 {
                         sotivchi: user.name,
                         tovar: req.body.local[i].id,
                         name: req.body.local[i].name,
+                        shtrix: req.body.local[i].shtrix, 
                         olinish: req.body.local[i].olinish,
                         soni: req.body.local[i].soni,
                         sotilish: req.body.local[i].sotilish,
                         chegrma: req.body.local[i].chegirma,
+                        skidka: req.body.local[i].skidka,
                         jami: req.body.local[i].jami,
-                        valy: req.body.vname,
+                        kurs: req.body.vname,
                         valyuta: req.body.vsumma,
                     });
                 }
             } else {
-                const savdo2 = await Savdo2.create({
+                const savdo = await Savdo.create({
                     userId: user.id,
                     magazinId: req.body.magazinId,
                     magazin: req.body.magazin,
                     sotivchi: user.name,
-                    sana: req.body.sana,
+                    mijozId: 0,
+                    mijoz: req.body.mijozId,
                     jamisumma: req.body.jamisum,
                     naqt: req.body.naqt,
                     plastik: req.body.plastik,
                     bank: req.body.bank,
-                    valy: req.body.vname,
+                    karz: req.body.karz,
+                    srok: req.body.srok,
+                    kurs: req.body.vname,
                     valyuta: req.body.vsumma,
                 });
                 for (let i = 0; i < req.body.local.length; i++) {
@@ -841,15 +863,17 @@ class UserController extends UserController2 {
                         magazinId: req.body.magazinId,
                         magazin: req.body.magazin,
                         sotivchi: user.name,
-                        savdo2Id: savdo2.id,
+                        savdoId: savdo.id,
                         tovar: req.body.local[i].id,
                         name: req.body.local[i].name,
+                        shtrix: req.body.local[i].shtrix, 
                         olinish: req.body.local[i].olinish,
                         soni: req.body.local[i].soni,
                         sotilish: req.body.local[i].sotilish,
                         chegrma: req.body.local[i].chegirma,
+                        skidka: req.body.local[i].skidka,
                         jami: req.body.local[i].jami,
-                        valy: req.body.vname,
+                        kurs: req.body.vname,
                         valyuta: req.body.vsumma,
                     });
                 }
@@ -874,7 +898,7 @@ class UserController extends UserController2 {
                     bank: req.body.bank,
                     karz: req.body.karz,
                     srok: req.body.srok,
-                    valy: req.body.vname,
+                    kurs: req.body.vname,
                     valyuta: req.body.vsumma,
                 });
                 for (let i = 0; i < req.body.local.length; i++) {
@@ -889,27 +913,32 @@ class UserController extends UserController2 {
                         savdoId: savdo.id,
                         tovar: req.body.local[i].id,
                         name: req.body.local[i].name,
+                        shtrix: req.body.local[i].shtrix, 
                         olinish: req.body.local[i].olinish,
                         soni: req.body.local[i].soni,
                         sotilish: req.body.local[i].sotilish,
                         chegrma: req.body.local[i].chegirma,
+                        skidka: req.body.local[i].skidka,
                         jami: req.body.local[i].jami,
-                        valy: req.body.vname,
+                        kurs: req.body.vname,
                         valyuta: req.body.vsumma,
                     });
                 }
             } else {
-                const savdo2 = await Savdo2.create({
+                const savdo = await Savdo.create({
                     userId: user.userId,
                     magazinId: req.body.magazinId,
                     magazin: req.body.magazin,
                     sotivchi: user.name,
-                    sana: req.body.sana,
+                    mijozId: 0,
+                    mijoz: req.body.mijozId,
                     jamisumma: req.body.jamisum,
                     naqt: req.body.naqt,
                     plastik: req.body.plastik,
                     bank: req.body.bank,
-                    valy: req.body.vname,
+                    karz: req.body.karz,
+                    srok: req.body.srok,
+                    kurs: req.body.vname,
                     valyuta: req.body.vsumma,
                 });
                 for (let i = 0; i < req.body.local.length; i++) {
@@ -921,15 +950,17 @@ class UserController extends UserController2 {
                         magazinId: req.body.magazinId,
                         magazin: req.body.magazin,
                         sotivchi: user.name,
-                        savdo2Id: savdo2.id,
+                        savdoId: savdo.id,
                         tovar: req.body.local[i].id,
                         name: req.body.local[i].name,
+                        shtrix: req.body.local[i].shtrix, 
                         olinish: req.body.local[i].olinish,
                         soni: req.body.local[i].soni,
                         sotilish: req.body.local[i].sotilish,
                         chegrma: req.body.local[i].chegirma,
+                        skidka: req.body.local[i].skidka,
                         jami: req.body.local[i].jami,
-                        valy: req.body.vname,
+                        kurs: req.body.vname,
                         valyuta: req.body.vsumma,
                     });
                 }
@@ -957,10 +988,15 @@ class UserController extends UserController2 {
                     zaqazId: zaqaz.id,
                     tovar: req.body.local[i].id,
                     name: req.body.local[i].name,
+                    shtrix: req.body.local[i].shtrix,
                     soni: req.body.local[i].soni,
                     sotilish: req.body.local[i].sotilish,
+                    sotilish_prise: req.body.local[i].sotilish_prise,
                     chegrma: req.body.local[i].chegirma,
+                    skidka: req.body.local[i].skidka,
                     jami: req.body.local[i].jami,
+                    kurs: req.body.local[i].summa,
+                    valyuta: req.body.local[i].valyuta,
                 });
             }
             return res.json(200);
@@ -982,10 +1018,15 @@ class UserController extends UserController2 {
                     zaqazId: zaqaz.id,
                     tovar: req.body.local[i].id,
                     name: req.body.local[i].name,
+                    shtrix: req.body.local[i].shtrix,
                     soni: req.body.local[i].soni,
                     sotilish: req.body.local[i].sotilish,
+                    sotilish_prise: req.body.local[i].sotilish_prise,
                     chegrma: req.body.local[i].chegirma,
+                    skidka: req.body.local[i].skidka,
                     jami: req.body.local[i].jami,
+                    kurs: req.body.local[i].summa,
+                    valyuta: req.body.local[i].valyuta,
                 });
             }
             return res.json(200);

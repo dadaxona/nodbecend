@@ -36,6 +36,12 @@ module.exports = {
       summa: {
         type: Sequelize.STRING
       },
+      kurs: {
+        type: Sequelize.STRING
+      },
+      valyuta: {
+        type: Sequelize.STRING
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

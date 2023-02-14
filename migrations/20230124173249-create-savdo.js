@@ -45,7 +45,7 @@ module.exports = {
       srok: {
         type: Sequelize.STRING
       },
-      valy: {
+      kurs: {
         type: Sequelize.STRING
       },
       valyuta: {

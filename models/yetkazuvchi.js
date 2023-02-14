@@ -20,7 +20,9 @@ module.exports = (sequelize, DataTypes) => {
     magazinId: DataTypes.INTEGER,
     magazin: DataTypes.STRING,
     name: DataTypes.STRING,
-    summa: DataTypes.STRING
+    summa: DataTypes.STRING,
+    kurs: DataTypes.STRING,
+    valyuta: DataTypes.STRING,   
   }, {
     sequelize,
     modelName: 'Yetkazuvchi',

@@ -30,16 +30,31 @@ module.exports = {
       name: {
         type: Sequelize.STRING
       },
+      shtrix: {
+        type: Sequelize.STRING
+      },
       soni: {
         type: Sequelize.STRING
       },
       sotilish: {
         type: Sequelize.STRING
       },
+      sotilish_prise: {
+        type: Sequelize.STRING
+      },
       chegrma: {
         type: Sequelize.STRING
       },
+      skidka: {
+        type: Sequelize.STRING
+      },
       jami: {
+        type: Sequelize.STRING
+      },
+      kurs: {
+        type: Sequelize.STRING
+      },
+      valyuta: {
         type: Sequelize.STRING
       },
       createdAt: {

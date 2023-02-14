@@ -25,6 +25,8 @@ module.exports = (sequelize, DataTypes) => {
     telegram: DataTypes.STRING,
     karz: DataTypes.STRING,
     summa: DataTypes.STRING,
+    kurs: DataTypes.STRING,
+    valyuta: DataTypes.STRING,    
   }, {
     sequelize,
     modelName: 'Mijoz',

@@ -21,10 +21,15 @@ module.exports = (sequelize, DataTypes) => {
     zaqazId: DataTypes.INTEGER,
     tovar: DataTypes.INTEGER,
     name: DataTypes.STRING,
+    shtrix: DataTypes.STRING,
     soni: DataTypes.STRING,
     sotilish: DataTypes.STRING,
+    sotilish_prise: DataTypes.STRING,
     chegrma: DataTypes.STRING,
-    jami: DataTypes.STRING
+    skidka: DataTypes.STRING,
+    jami: DataTypes.STRING,
+    kurs: DataTypes.STRING,
+    valyuta: DataTypes.STRING,
   }, {
     sequelize,
     modelName: 'Karzina',

@@ -24,13 +24,13 @@ module.exports = {
       savdoId: {
         type: Sequelize.INTEGER
       },
-      savdo2Id: {
-        type: Sequelize.INTEGER
-      },
       tovar: {
         type: Sequelize.INTEGER
       },
       name: {
+        type: Sequelize.STRING
+      },
+      shtrix: {
         type: Sequelize.STRING
       },
       olinish: {
@@ -45,10 +45,13 @@ module.exports = {
       chegrma: {
         type: Sequelize.STRING
       },
+      skidka: {
+        type: Sequelize.STRING
+      },
       jami: {
         type: Sequelize.STRING
       },
-      valy: {
+      kurs: {
         type: Sequelize.STRING
       },
       valyuta: {
