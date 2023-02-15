@@ -45,6 +45,9 @@ module.exports = {
       srok: {
         type: Sequelize.STRING
       },
+      sana: {
+        type: Sequelize.STRING
+      },
       kurs: {
         type: Sequelize.STRING
       },

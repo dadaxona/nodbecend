@@ -75,18 +75,18 @@ class UserController extends UserController2 {
         if (req.body.status == 'brend') {
             if (req.body.search) {      
                 const data1 = await Valyuta.findAll({ where: { magazinId: req.body.magazinId, [Op.or]: [{ name: {[ Op.iRegexp ]: req.body.search }}]}});
-                return res.json(data1);
+                return res.json({'obj': data1, 'valyuta': []});
             } else {
                 const data2 = await Valyuta.findAll({ where: { magazinId: req.body.magazinId } });
-                return res.json(data2);
+                return res.json({'obj': data2, 'valyuta': []});
             }
         } else {
             if (req.body.search) {
                 const data1 = await Valyuta.findAll({ where: { magazinId: req.body.magazinId, [Op.or]: [{ name: {[ Op.iRegexp ]: req.body.search }}]}});
-                return res.json(data1);
+                return res.json({'obj': data1, 'valyuta': []});
             } else {
                 const data2 = await Valyuta.findAll({ where: { magazinId: req.body.magazinId } });
-                return res.json(data2);
+                return res.json({'obj': data2, 'valyuta': []});
             }
         }
     }
@@ -279,9 +279,11 @@ class UserController extends UserController2 {
         if (req.body.status == 'brend') {
             if (req.body.search) {      
                 const data1 = await Mijoz.findAll({ where: { magazinId: req.body.magazinId, [Op.or]: [{ name: {[ Op.iRegexp ]: req.body.search }}]}});
-                return res.json(data1);
+                const valyuta = await Valyuta.findAll({ where: { magazinId: req.body.magazinId } });    
+                return res.json({'obj': data1, 'valyuta': valyuta});
             } else {
                 const data2 = await Mijoz.findAll({ where: { magazinId: req.body.magazinId } });
+                const valyuta = await Valyuta.findAll({ where: { magazinId: req.body.magazinId } });                
                 for (let i = 0; i < data2.length; i++) {
                     data2[i].karz = 0;
                     await data2[i].save();
@@ -291,15 +293,17 @@ class UserController extends UserController2 {
                         await data2[i].save();
                     }
                 }
-                return res.json(data2);
+                return res.json({'obj': data2, 'valyuta': valyuta});
             }
         } else {
             const user = await Ishchilar.findOne({ where: { login: req.body.login, token: req.body.token }});
             if (req.body.search) {      
                 const data1 = await Mijoz.findAll({ where: { magazinId: user.magazinId, [Op.or]: [{ name: {[ Op.iRegexp ]: req.body.search }}]}});
-                return res.json(data1);
+                const valyuta = await Valyuta.findAll({ where: { magazinId: req.body.magazinId } });    
+                return res.json({'obj': data1, 'valyuta': valyuta});
             } else {
                 const data2 = await Mijoz.findAll({ where: { magazinId: user.magazinId } });
+                const valyuta = await Valyuta.findAll({ where: { magazinId: req.body.magazinId } });
                 for (let i = 0; i < data2.length; i++) {
                     data2[i].karz = 0;
                     await data2[i].save();
@@ -309,7 +313,7 @@ class UserController extends UserController2 {
                         await data2[i].save();
                     }
                 }
-                return res.json(data2);
+                return res.json({'obj': data2, 'valyuta': valyuta});
             }
         }
     }
@@ -469,19 +473,23 @@ class UserController extends UserController2 {
         if (req.body.status == 'brend') {
             if (req.body.search) {      
                 const data1 = await Yetkazuvchi.findAll({ where: {magazinId: req.body.magazinId, [Op.or]: [{ name: {[ Op.iRegexp ]: req.body.search }}]}});
-                return res.json(data1);
+                const valyuta = await Valyuta.findAll({ where: { magazinId: req.body.magazinId } });    
+                return res.json({'obj': data1, 'valyuta': valyuta});
             } else {
                 const data2 = await Yetkazuvchi.findAll({ where: {magazinId: req.body.magazinId } });
-                return res.json(data2);
+                const valyuta = await Valyuta.findAll({ where: { magazinId: req.body.magazinId } });    
+                return res.json({'obj': data2, 'valyuta': valyuta});
             }
         } else {
             const user = await Ishchilar.findOne({ where: { login: req.body.login, token: req.body.token }});
             if (req.body.search) {      
                 const data1 = await Yetkazuvchi.findAll({ where: { magazinId: user.magazinId, [Op.or]: [{ name: {[ Op.iRegexp ]: req.body.search }}]}});
-                return res.json(data1);
+                const valyuta = await Valyuta.findAll({ where: { magazinId: req.body.magazinId } });    
+                return res.json({'obj': data1, 'valyuta': valyuta});
             } else {
                 const data2 = await Yetkazuvchi.findAll({ where: { magazinId: user.magazinId } });
-                return res.json(data2);
+                const valyuta = await Valyuta.findAll({ where: { magazinId: req.body.magazinId } });    
+                return res.json({'obj': data2, 'valyuta': valyuta});
             }
         }
         
@@ -700,19 +708,23 @@ class UserController extends UserController2 {
         if (req.body.status == 'brend') {
             if (req.body.search) {      
                 const data1 = await Chiqim.findAll({ where: { magazinId: req.body.magazinId, [Op.or]: [{ qayerga: {[ Op.iRegexp ]: req.body.search }}]}});
-                return res.json(data1);
+                const valyuta = await Valyuta.findAll({ where: { magazinId: req.body.magazinId } });    
+                return res.json({'obj': data1, 'valyuta': valyuta});
             } else {
                 const data2 = await Chiqim.findAll({ where: { magazinId: req.body.magazinId } });
-                return res.json(data2);
+                const valyuta = await Valyuta.findAll({ where: { magazinId: req.body.magazinId } });    
+                return res.json({'obj': data2, 'valyuta': valyuta});
             }
         } else {
             const user = await Ishchilar.findOne({ where: { login: req.body.login, token: req.body.token }});
             if (req.body.search) {      
                 const data1 = await Chiqim.findAll({ where: { magazinId: user.magazinId, [Op.or]: [{ qayerga: {[ Op.iRegexp ]: req.body.search }}]}});
-                return res.json(data1);
+                const valyuta = await Valyuta.findAll({ where: { magazinId: req.body.magazinId } });    
+                return res.json({'obj': data1, 'valyuta': valyuta});
             } else {
                 const data2 = await Chiqim.findAll({ where: { magazinId: user.magazinId } });
-                return res.json(data2);
+                const valyuta = await Valyuta.findAll({ where: { magazinId: req.body.magazinId } });    
+                return res.json({'obj': data2, 'valyuta': valyuta});
             }
         }
     }
@@ -811,8 +823,9 @@ class UserController extends UserController2 {
                     bank: req.body.bank,
                     karz: req.body.karz,
                     srok: req.body.srok,
-                    kurs: req.body.vname,
-                    valyuta: req.body.vsumma,
+                    sana: req.body.sana,
+                    kurs: req.body.vsumma,
+                    valyuta: req.body.vname,
                 });
                 for (let i = 0; i < req.body.local.length; i++) {
                     var tovar = await Tovar.findByPk(req.body.local[i].id);
@@ -833,8 +846,8 @@ class UserController extends UserController2 {
                         chegrma: req.body.local[i].chegirma,
                         skidka: req.body.local[i].skidka,
                         jami: req.body.local[i].jami,
-                        kurs: req.body.vname,
-                        valyuta: req.body.vsumma,
+                        kurs: req.body.vsumma,
+                        valyuta: req.body.vname,
                     });
                 }
             } else {
@@ -851,8 +864,9 @@ class UserController extends UserController2 {
                     bank: req.body.bank,
                     karz: req.body.karz,
                     srok: req.body.srok,
-                    kurs: req.body.vname,
-                    valyuta: req.body.vsumma,
+                    sana: req.body.sana,
+                    kurs: req.body.vsumma,
+                    valyuta: req.body.vname,
                 });
                 for (let i = 0; i < req.body.local.length; i++) {
                     var tovar = await Tovar.findByPk(req.body.local[i].id);
@@ -873,8 +887,8 @@ class UserController extends UserController2 {
                         chegrma: req.body.local[i].chegirma,
                         skidka: req.body.local[i].skidka,
                         jami: req.body.local[i].jami,
-                        kurs: req.body.vname,
-                        valyuta: req.body.vsumma,
+                        kurs: req.body.vsumma,
+                        valyuta: req.body.vname,
                     });
                 }
             }
@@ -898,8 +912,9 @@ class UserController extends UserController2 {
                     bank: req.body.bank,
                     karz: req.body.karz,
                     srok: req.body.srok,
-                    kurs: req.body.vname,
-                    valyuta: req.body.vsumma,
+                    sana: req.body.sana,
+                    kurs: req.body.vsumma,
+                    valyuta: req.body.vname,
                 });
                 for (let i = 0; i < req.body.local.length; i++) {
                     var tovar = await Tovar.findByPk(req.body.local[i].id);
@@ -920,8 +935,8 @@ class UserController extends UserController2 {
                         chegrma: req.body.local[i].chegirma,
                         skidka: req.body.local[i].skidka,
                         jami: req.body.local[i].jami,
-                        kurs: req.body.vname,
-                        valyuta: req.body.vsumma,
+                        kurs: req.body.vsumma,
+                        valyuta: req.body.vname,
                     });
                 }
             } else {
@@ -938,8 +953,9 @@ class UserController extends UserController2 {
                     bank: req.body.bank,
                     karz: req.body.karz,
                     srok: req.body.srok,
-                    kurs: req.body.vname,
-                    valyuta: req.body.vsumma,
+                    sana: req.body.sana,
+                    kurs: req.body.vsumma,
+                    valyuta: req.body.vname,
                 });
                 for (let i = 0; i < req.body.local.length; i++) {
                     var tovar = await Tovar.findByPk(req.body.local[i].id);
@@ -960,8 +976,8 @@ class UserController extends UserController2 {
                         chegrma: req.body.local[i].chegirma,
                         skidka: req.body.local[i].skidka,
                         jami: req.body.local[i].jami,
-                        kurs: req.body.vname,
-                        valyuta: req.body.vsumma,
+                        kurs: req.body.vsumma,
+                        valyuta: req.body.vname,
                     });
                 }
             }
@@ -1073,27 +1089,39 @@ class UserController extends UserController2 {
             const tovar = await Tovar.findAll({ where: { magazinId: req.body.magazinId }});
             const mijoz = await Mijoz.findAll({ where: { magazinId: req.body.magazinId }});
             for (let i = 0; i < sotuv.length; i++) {
-                if (sotuv[i].valyuta == 1) {
-                    sav += parseFloat(sotuv[i].jami);
+                if (sotuv[i].valyuta) {
+                    sav += parseFloat(sotuv[i].jami) * parseFloat(sotuv[i].kurs);
                 } else {
-                    sav += parseFloat(sotuv[i].jami) * parseFloat(sotuv[i].valyuta);
+                    sav += parseFloat(sotuv[i].jami);
                 }
             }
             for (let i0 = 0; i0 < sotuv.length; i0++) {
-                if (sotuv[i0].valyuta == 1) {
-                    ol += parseFloat(sotuv[i0].olinish) * parseFloat(sotuv[i0].soni);
+                if (sotuv[i0].valyuta) {
+                    ol += parseFloat(sotuv[i0].olinish) * parseFloat(sotuv[i0].kurs) * parseFloat(sotuv[i0].soni);
                 } else {
-                    ol += parseFloat(sotuv[i0].olinish) * parseFloat(sotuv[i0].valyuta) * parseFloat(sotuv[i0].soni);
+                    ol += parseFloat(sotuv[i0].olinish) * parseFloat(sotuv[i0].soni);
                 }
             }
             for (let i2 = 0; i2 < savdo.length; i2++) {
-                qarz += parseFloat(savdo[i2].karz);
+                if (savdo[i2].valyuta) {
+                    qarz += parseFloat(savdo[i2].karz) * parseFloat(savdo[i2].kurs);
+                } else {
+                    qarz += parseFloat(savdo[i2].karz);
+                }
             }
-            for (let i3 = 0; i3 < chiqim.length; i3++) {
-                chiq += parseFloat(chiqim[i3].summa);
+            for (let i3 = 0; i3 < chiqim.length; i3++) {;
+                if (chiqim[i3].valyuta) {
+                    chiq += parseFloat(chiqim[i3].summa) * parseFloat(chiqim[i3].kurs);   
+                } else {
+                    chiq += parseFloat(chiqim[i3].summa);
+                }
             }
             for (let i4 = 0; i4 < yetkazuvchi.length; i4++) {
-                yet += parseFloat(yetkazuvchi[i4].summa);
+                if (yetkazuvchi[i4].valyuta) {
+                    yet += parseFloat(yetkazuvchi[i4].summa) * parseFloat(yetkazuvchi[i4].kurs);   
+                } else {
+                    yet += parseFloat(yetkazuvchi[i4].summa);
+                }
             }
             for (let i5 = 0; i5 < tovar.length; i5++) {
                 if (tovar[i5].valyuta) {
@@ -1103,9 +1131,13 @@ class UserController extends UserController2 {
                 }
             }
             for (let i6 = 0; i6 < mijoz.length; i6++) {
-                mij += parseFloat(mijoz[i6].summa);
+                if (mijoz[i6].valyuta) {
+                    mij += parseFloat(mijoz[i6].summa) * parseFloat(mijoz[i6].kurs);   
+                } else {
+                    mij += parseFloat(mijoz[i6].summa);
+                }
             }
-            foyda = sav - qarz - chiq - ol + mij;
+            foyda = sav - qarz - chiq - yet - ol + mij;
             return res.json({ 'sav': sav, 'qarz': qarz, 'chiq': chiq, 'yet': yet, 'sql': sql, 'foyda': foyda })
         // } else {
 
