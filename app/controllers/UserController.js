@@ -403,19 +403,19 @@ class UserController extends UserController2 {
         if (req.body.status == 'brend') {
             if (req.body.search) {      
                 const data1 = await Tip.findAll({ where: { magazinId: req.body.magazinId, [Op.or]: [{ name: {[ Op.iRegexp ]: req.body.search }}]}});
-                return res.json(data1);
+                return res.json({'obj': data1, 'valyuta': []});
             } else {
                 const data2 = await Tip.findAll({ where: { magazinId: req.body.magazinId } });
-                return res.json(data2);
+                return res.json({'obj': data2, 'valyuta': []});
             }
         } else {
             const user = await Ishchilar.findOne({ where: { login: req.body.login, token: req.body.token }});
             if (req.body.search) {      
                 const data1 = await Tip.findAll({ where: { magazinId: user.magazinId, [Op.or]: [{ name: {[ Op.iRegexp ]: req.body.search }}]}});
-                return res.json(data1);
+                return res.json({'obj': data1, 'valyuta': []});
             } else {
                 const data2 = await Tip.findAll({ where: { magazinId: user.magazinId } });
-                return res.json(data2);
+                return res.json({'obj': data2, 'valyuta': []});
             }
         }
     }
