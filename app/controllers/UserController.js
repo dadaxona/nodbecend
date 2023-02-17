@@ -10,6 +10,11 @@ class UserController extends UserController2 {
         return res.json([user]);
     }
 
+    async UsergetPrint (req, res){
+        const user = await User.findOne({ where: { login: req.body.login, token: req.body.token }});
+        return res.json(user);
+    }
+
     async User_Update(req, res){
         const userby = await User.update(req.body, { where: { id: req.body.id } });
         if (userby) {
