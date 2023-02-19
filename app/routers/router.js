@@ -1,6 +1,20 @@
 const { Router } = require('express')
 const UserController = require('../controllers/UserController')
 const route = Router()
+var dateObj = new Date();
+var month = dateObj.getUTCMonth() + 1;
+var day = dateObj.getUTCDate();
+var year = dateObj.getUTCFullYear();
+var monh = '';
+if (month < 10) {
+    monh = '0' + month;
+} else {
+    monh = month;
+}
+var date = year + "-" + monh + "-" + day;
+setInterval(() => {
+    UserController.DolgiCilent(date)
+}, 7200000);
 
 route.post('/loginauth', UserController.Login)
 route.post('/register', UserController.Registration)

@@ -15,7 +15,8 @@ module.exports = (sequelize, DataTypes) => {
   }
   Magazin.init({
     userId: DataTypes.INTEGER,
-    name: DataTypes.STRING
+    name: DataTypes.STRING,
+    telegram: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'Magazin',
