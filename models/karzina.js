@@ -23,6 +23,7 @@ module.exports = (sequelize, DataTypes) => {
     name: DataTypes.STRING,
     shtrix: DataTypes.STRING,
     soni: DataTypes.STRING,
+    olinish: DataTypes.STRING,
     sotilish: DataTypes.STRING,
     sotilish_prise: DataTypes.STRING,
     chegrma: DataTypes.STRING,

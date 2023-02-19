@@ -15,6 +15,12 @@ module.exports = {
       login: {
         type: Sequelize.STRING
       },
+      tel: {
+        type: Sequelize.STRING
+      },
+      telegram: {
+        type: Sequelize.STRING
+      },
       biznes: {
         type: Sequelize.STRING
       },

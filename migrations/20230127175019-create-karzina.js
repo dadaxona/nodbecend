@@ -36,6 +36,9 @@ module.exports = {
       soni: {
         type: Sequelize.STRING
       },
+      olinish: {
+        type: Sequelize.STRING
+      },
       sotilish: {
         type: Sequelize.STRING
       },
