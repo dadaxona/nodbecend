@@ -1697,9 +1697,37 @@ class UserController extends UserController2 {
     }
 
     async Vazvrad_Post(req, res) {
+        var son = '';
+        var jami = '';
+        var jami2 = '';
         const sotu = await Sotuv.findOne({ where: { id: req.body.id2 }});
+        son = sotu.soni - req.body.soni2;
         sotu.soni = sotu.soni - req.body.soni2;
+        sotu.jami = sotu.sotilish * parseFloat(son);
         await sotu.save();
+        const savd = await Savdo.findByPk(sotu.savdoId);
+        jami = sotu.sotilish * parseFloat(req.body.soni2);
+        if (savd.karz > 0) {
+            if (savd.karz >= parseFloat(jami)) {
+                savd.karz = savd.karz - parseFloat(jami);
+                savd.jamisumma = savd.jamisumma - parseFloat(jami);
+                await savd.save();
+            } else {
+                jami2 = parseFloat(jami) - savd.karz;
+                if (parseFloat(jami2) > savd.jamisumma) {
+                    savd.karz = 0;
+                    savd.jamisumma = 0;
+                    await savd.save();
+                } else {
+                    savd.karz = 0;
+                    savd.jamisumma = savd.jamisumma - parseFloat(jami);
+                    await savd.save();
+                }
+            }
+        } else {
+            savd.jamisumma = savd.jamisumma - parseFloat(jami);
+            await savd.save();
+        }
         return res.json(200);
     }
 
