@@ -1,4 +1,4 @@
-const { User, Tip, Tovar, Mijoz, Ishchilar, Yetkazuvchi, Valyuta, Chiqim, Savdo, Sotuv, Karzina, Zaqaz, Magazin } = require('../../models');
+const { User, Tip, Tovar, Mijoz, Ishchilar, Yetkazuvchi, Valyuta, Chiqim, Savdo, Sotuv, Karzina, Zaqaz, Magazin, Yetkazuvchiarxiv } = require('../../models');
 const { Op } = require("sequelize");
 const UserController2 = require('./UserController2');
 const e = require('express');
@@ -11,8 +11,14 @@ class UserController extends UserController2 {
     }
 
     async UsergetPrint (req, res){
-        const user = await User.findOne({ where: { login: req.body.login, token: req.body.token }});
-        return res.json(user);
+        if (req.body.status == 'brend') {
+            const user = await User.findOne({ where: { login: req.body.login, token: req.body.token }});
+            return res.json(user);
+        } else {
+            const ish = await Ishchilar.findOne({ where: { login: req.body.login, token: req.body.token }});
+            const user = await User.findByPk(ish.userId);
+            return res.json(user);
+        }
     }
 
     async User_Update(req, res){
@@ -972,6 +978,15 @@ class UserController extends UserController2 {
         }
     }
 
+    async Variant(req, res) {
+        if (req.body.tip) {
+            const data1 = await Tip.findAll({ where: { magazinId: req.body.magazinId, [Op.or]: [{ name: {[ Op.iRegexp ]: req.body.tip }}]}});
+            return res.json(data1);
+        } else {
+            return res.json([]);
+        }
+    }
+
     async Post_Update_Tip (req, res) {
         if (req.body.status == 'brend') {
             if (req.body.id) {
@@ -1044,12 +1059,38 @@ class UserController extends UserController2 {
                 return res.json({'obj': data2, 'valyuta': valyuta});
             }
         }
-        
+    }
+
+    async GetyetkazArxiv(req, res) {
+        if (req.body.sana) {
+            const yetk = await Yetkazuvchiarxiv.findAll({ where: { yetkazuvchiId: req.body.yetkazuvchiId, sana: req.body.sana } });
+            return res.json(yetk);
+        } else {
+            const yetk = await Yetkazuvchiarxiv.findAll({ where: { yetkazuvchiId: req.body.yetkazuvchiId } });
+            return res.json(yetk);
+        }
+    }
+
+    async Update_Arxive(req, res) {
+        await Yetkazuvchiarxiv.update({
+                soni: req.body.soni,
+                summa: req.body.summa,
+                jami: req.body.soni * req.body.summa
+            },
+            { where: { id: req.body.id }
+        });
+        const yetk = await Yetkazuvchiarxiv.findAll({ where: { yetkazuvchiId: req.body.yetkazuvchiId } });
+        return res.json(yetk);
     }
 
     async Yetkaz_Post_Update(req, res) {
         if (req.body.status == 'brend') {
             if (req.body.id) {
+                const yetk = await Yetkazuvchiarxiv.findOne({ where: { yetkazuvchiId: req.body.id } });
+                if (yetk) {
+                    yetk.name = req.body.name;
+                    await yetk.save();
+                } else { }
                 await Yetkazuvchi.update({
                     magazinId: req.body.magazinId,
                     magazin: req.body.magazin,
@@ -1078,6 +1119,11 @@ class UserController extends UserController2 {
             return res.json(200);
         } else {
             if (req.body.id) {
+                const yetk = await Yetkazuvchiarxiv.findOne({ where: { yetkazuvchiId: req.body.id } });
+                if (yetk) {
+                    yetk.name = req.body.name;
+                    await yetk.save();
+                } else { }
                 await Yetkazuvchi.update({
                     magazinId: req.body.magazinId,
                     magazin: req.body.magazin,
@@ -1101,13 +1147,18 @@ class UserController extends UserController2 {
                     summa: req.body.summa,
                     kurs: req.body.kurs,
                     valyuta: req.body.valyuta,
-                });  
+                });
             }
             return res.json(200);
         }
     }
 
     async Yetkaz_Delete(req, res) {
+        var yet = await Yetkazuvchiarxiv.findAll({ where: { yetkazuvchiId: req.body.id }});
+        if (yet.length > 0) {
+            await yet.destroy();
+        } else {
+        }
         await Yetkazuvchi.destroy({where: { id: req.body.id }});
         return res.json(200);
     }
@@ -1141,25 +1192,59 @@ class UserController extends UserController2 {
 
     async Sqlad(req, res){
         if (req.body.status == 'brend') {
+            var valu = '';
+            var valu2 = '';
+            const user = await User.findOne({  
+                where: { login: req.body.login, token: req.body.token }
+            });     
+            const valyuta = await Valyuta.findOne({
+                where: { userId: user.id, name: req.body.valyuta }
+            });
+            if (valyuta) {
+                valu = valyuta.name;
+                valu2 = valyuta.summa
+            } else {
+                valu = '';
+                valu2 = '';
+            }
             if (req.body.id) {
+                if (req.body.adress) {
+                    const user = await User.findOne({  
+                        where: { login: req.body.login, token: req.body.token }
+                    });
+                    var so = '';
+                    var javob = '';
+                    const tasq = await Tovar.findByPk(req.body.id);
+                    so = parseFloat(req.body.soni) - parseFloat(tasq.soni);
+                    javob = so * parseFloat(req.body.olinish);
+                    const adress = await Yetkazuvchi.findOne({ where: { name: req.body.adress }})
+                    await Yetkazuvchiarxiv.create({
+                        userId: user.id,
+                        magazinId: req.body.magazinId,
+                        magazin: req.body.magazin,
+                        yetkazuvchiId: adress.id,
+                        name: adress.name,
+                        soni: so,
+                        summa: req.body.olinish,
+                        jami: javob,
+                        sana: req.body.date,
+                        kurs: valu2,
+                        valyuta: valu,
+                    });
+                } else {}
                 await Tovar.update(req.body, {
                     where: { id: req.body.id }
                 });
             } else {
-                var valu = '';
-                var valu2 = '';
-                const user = await User.findOne({  
-                    where: { login: req.body.login, token: req.body.token }
-                });
-                const valyuta = await Valyuta.findOne({
-                    where: { userId: user.id, name: req.body.valyuta }
-                });
-                if (valyuta) {
-                    valu = valyuta.name;
-                    valu2 = valyuta.summa
+                const rbt = await Tip.findOne({ where: { name: req.body.tip }});
+                if (rbt) {
                 } else {
-                    valu = '';
-                    valu2 = '';
+                    await Tip.create({
+                        userId: user.id,
+                        magazinId: req.body.magazinId,
+                        magazin: req.body.magazin,
+                        name: req.body.tip
+                    }); 
                 }
                 await Tovar.create({
                     userId: user.id,
@@ -1180,25 +1265,59 @@ class UserController extends UserController2 {
             }
             return res.json(200);
         } else {
+            var valu = '';
+            var valu2 = '';
+            const user = await Ishchilar.findOne({  
+                where: { login: req.body.login, token: req.body.token }
+            });
+            const valyuta = await Valyuta.findOne({
+                where: { userId: user.userId, name: req.body.valyuta }
+            });
+            if (valyuta) {
+                valu = valyuta.name;
+                valu2 = valyuta.summa
+            } else {
+                valu = '';
+                valu2 = '';
+            }
             if (req.body.id) {
+                if (req.body.adress) {
+                    const user = await Ishchilar.findOne({  
+                        where: { login: req.body.login, token: req.body.token }
+                    });
+                    var so = '';
+                    var javob = '';
+                    const tasq = await Tovar.findByPk(req.body.id);
+                    so = parseFloat(req.body.soni) - parseFloat(tasq.soni);
+                    javob = so * parseFloat(req.body.olinish);
+                    const adress = await Yetkazuvchi.findOne({ where: { name: req.body.adress }})
+                    await Yetkazuvchiarxiv.create({
+                        userId: user.userId,
+                        magazinId: req.body.magazinId,
+                        magazin: req.body.magazin,
+                        yetkazuvchiId: adress.id,
+                        name: adress.name,
+                        soni: so,
+                        summa: req.body.olinish,
+                        jami: javob,
+                        sana: req.body.date,
+                        kurs: valu2,
+                        valyuta: valu,
+                    });
+                } else {}
                 await Tovar.update(req.body, {
                     where: { id: req.body.id }
                 });
             } else {
-                var valu = '';
-                var valu2 = '';
-                const user = await Ishchilar.findOne({  
-                    where: { login: req.body.login, token: req.body.token }
-                });
-                const valyuta = await Valyuta.findOne({
-                    where: { userId: user.userId, name: req.body.valyuta }
-                });
-                if (valyuta) {
-                    valu = valyuta.name;
-                    valu2 = valyuta.summa
+                const rbt = await Tip.findOne({ where: { name: req.body.tip }});
+                if (rbt) {
                 } else {
-                    valu = '';
-                    valu2 = '';
+                    await Tip.create({
+                        userId: user.userId,
+                        magazinId: req.body.magazinId,
+                        magazin: req.body.magazin,
+                        name: req.body.tip
+                    }); 
                 }
                 await Tovar.create({
                     userId: user.userId,

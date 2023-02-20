@@ -1,20 +1,20 @@
 const { Router } = require('express')
 const UserController = require('../controllers/UserController')
 const route = Router()
-var dateObj = new Date();
-var month = dateObj.getUTCMonth() + 1;
-var day = dateObj.getUTCDate();
-var year = dateObj.getUTCFullYear();
-var monh = '';
-if (month < 10) {
-    monh = '0' + month;
-} else {
-    monh = month;
-}
-var date = year + "-" + monh + "-" + day;
-setInterval(() => {
-    UserController.DolgiCilent(date)
-}, 7200000);
+// var dateObj = new Date();
+// var month = dateObj.getUTCMonth() + 1;
+// var day = dateObj.getUTCDate();
+// var year = dateObj.getUTCFullYear();
+// var monh = '';
+// if (month < 10) {
+//     monh = '0' + month;
+// } else {
+//     monh = month;
+// }
+// var date = year + "-" + monh + "-" + day;
+// setInterval(() => {
+//     UserController.DolgiCilent(date)
+// }, 7200000);
 
 route.post('/loginauth', UserController.Login)
 route.post('/register', UserController.Registration)
@@ -32,6 +32,7 @@ route.post('/clentgets', UserController.MijozTelv)
 route.post('/dolgicilent', UserController.DolgiCilent)
 
 route.post('/gettip', UserController.Gettip)
+route.post('/variant', UserController.Variant)
 route.post('/post_update', UserController.Post_Update_Tip)
 route.post('/tipsdelete', UserController.Tipsdelete)
 
@@ -44,6 +45,8 @@ route.post('/post_update_valyuta', UserController.Valyuta_Create_Update)
 route.post('/valyuta_delete', UserController.Valyuta_Delete)
 
 route.post('/getyetkaz', UserController.Getyetkaz)
+route.post('/getyarxive', UserController.GetyetkazArxiv)
+route.post('/update_arxive', UserController.Update_Arxive)
 route.post('/post_update_yetkaz', UserController.Yetkaz_Post_Update)
 route.post('/yetkaz_delete', UserController.Yetkaz_Delete)
 
