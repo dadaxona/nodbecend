@@ -1696,6 +1696,13 @@ class UserController extends UserController2 {
         }
     }
 
+    async Vazvrad_Post(req, res) {
+        const sotu = await Sotuv.findOne({ where: { id: req.body.id2 }});
+        sotu.soni = sotu.soni - req.body.soni2;
+        await sotu.save();
+        return res.json(200);
+    }
+
     async Karzina(req, res){
         if (req.body.status == 'brend') {
             const user = await User.findOne({ where: { login: req.body.login, token: req.body.token }});

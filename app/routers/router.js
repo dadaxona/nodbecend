@@ -62,6 +62,7 @@ route.post('/chiqim_delet', UserController.Chiqim_Delet)
 
 route.post('/live_search', UserController.Live_Search)
 route.post('/oplata', UserController.Oplata)
+route.post('/vazvrad_post', UserController.Vazvrad_Post)
 route.post('/karzina', UserController.Karzina)
 
 route.post('/tolovpost', UserController.Tolov_Post)
