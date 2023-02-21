@@ -16,6 +16,7 @@ const route = Router()
 //     UserController.DolgiCilent(date)
 // }, 7200000);
 
+route.get('/test', UserController.Tester)
 route.post('/loginauth', UserController.Login)
 route.post('/register', UserController.Registration)
 route.post('/virfiy', UserController.Verifiy)
