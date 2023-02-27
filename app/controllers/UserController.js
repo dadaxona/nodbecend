@@ -601,7 +601,7 @@ class UserController extends UserController2 {
             }                
         } else { }
     }
-    
+
     async Valyuta_Get (req, res) {
         if (req.body.status == 'brend') {
             if (req.body.search) {      
@@ -1473,7 +1473,7 @@ class UserController extends UserController2 {
             }
         }
     }
-
+    // shor
     async Oplata(req, res) {
         if (req.body.status == 'brend') {
             const user = await User.findOne({ where: { login: req.body.login, token: req.body.token }});
@@ -1808,7 +1808,7 @@ class UserController extends UserController2 {
         } else {
             val = 'UZS'
         }
-        if (req.body.tolov = data.karz) {
+        if (req.body.tolov == data.karz) {
             msg = `Assalomu alaykum hurmatli mijoz sizning ${req.body.magazin} do'kondagi qarzinggiz to'landi. Biz bilan savdo qilganinggiz uchun tashakkur. Hurmat bilan ${req.body.magazin} jamosi`
         } else {
             sum = parseFloat(data.karz) - parseFloat(req.body.tolov);

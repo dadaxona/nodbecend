@@ -4,7 +4,7 @@ const { Op } = require("sequelize");
 class UserController2 extends ExcelController {
 
     async Tester (req, res) {
-        return res.json("Dadaxon");
+        return res.json("Node");
     }
 
     async Serchtor_live (req, res) {
