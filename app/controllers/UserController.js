@@ -742,27 +742,27 @@ class UserController extends UserController2 {
     }
 
     async Kassa_Creat(req, res){
-        const ishc = await Ishchilar.findOne({ where: { login: req.body.login2 }});
-        if (ishc) {
-            return res.json({'code': 100, 'msg': 'Bunday login royxatga olingan'});
+        const user = await User.findOne({ where: { login: req.body.login, token: req.body.token }});
+        const magazin = await Magazin.findByPk(req.body.magazinId);
+        if (req.body.id) {
+            await Ishchilar.update({
+                name: req.body.name,
+                fam: req.body.fam,
+                tel: req.body.tel,
+                login: req.body.login2,
+                password: req.body.password,
+                token: req.body.token2,
+                status: req.body.status2,
+                magazinId: magazin.id,
+                magazin: magazin.name,
+            },
+            {
+                where: { id: req.body.id }
+            });
         } else {
-            const user = await User.findOne({ where: { login: req.body.login, token: req.body.token }});
-            const magazin = await Magazin.findByPk(req.body.magazinId);
-            if (req.body.id) {
-                await Ishchilar.update({
-                    name: req.body.name,
-                    fam: req.body.fam,
-                    tel: req.body.tel,
-                    login: req.body.login2,
-                    password: req.body.password,
-                    token: req.body.token2,
-                    status: req.body.status2,
-                    magazinId: magazin.id,
-                    magazin: magazin.name,
-                },
-                {
-                    where: { id: req.body.id }
-                });
+            const ishc = await Ishchilar.findOne({ where: { login: req.body.login2 }});
+            if (ishc) {
+                return res.json({'code': 100, 'msg': 'Bunday login royxatga olingan'});
             } else {
                 await Ishchilar.create({
                     userId: user.id,
@@ -777,7 +777,7 @@ class UserController extends UserController2 {
                     magazin: magazin.name,
                 });
             }
-            return res.json({'code': 200});            
+        return res.json({'code': 200});            
         }
     }
 
