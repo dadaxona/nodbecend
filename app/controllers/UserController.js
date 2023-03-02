@@ -52,12 +52,13 @@ class UserController extends UserController2 {
                 if (user) {
                     const mijoz = await Mijoz.findAll({ where: { magazinId: { [Op.eq]: req.body.magazinId }}});
                     const savdo = await Savdo.findAll({ where: { magazinId: req.body.magazinId }});
+                    const sotuv = await Sotuv.findAll({ where: { magazinId: req.body.magazinId }});
                     const karz = await Savdo.findAll({ where: { magazinId: req.body.magazinId , karz: { [Op.gt]: '0' }}});
                     const srok = await Savdo.findAll({ where: { magazinId: req.body.magazinId , karz: { [Op.gt]: '0' }, srok: { [Op.lt]: req.body.date }}});
                     const zaqaz = await Zaqaz.findAll({ where: { magazinId: req.body.magazinId }});
                     const karzina = await Karzina.findAll({ where: { magazinId: req.body.magazinId }});
                     const magazin = await Magazin.findAll({ where: { userId: user.id }});
-                    return res.json({'code': 200, 'user': user, 'magazin': magazin, 'mijoz': mijoz, 'savdo': savdo, 'zaqaz': zaqaz, 'karz': karz, 'karzina': karzina, 'srok': srok});
+                    return res.json({'code': 200, 'user': user, 'magazin': magazin, 'mijoz': mijoz, 'savdo': savdo, 'sotuv': sotuv, 'zaqaz': zaqaz, 'karz': karz, 'karzina': karzina, 'srok': srok});
                 } else {
                     return res.json({'code': 0});
                 }                
@@ -70,253 +71,21 @@ class UserController extends UserController2 {
             if (ish) {
                 const mijoz = await Mijoz.findAll({ where: { magazinId: { [Op.eq]: ish.magazinId }}});
                 const savdo = await Savdo.findAll({ where: { magazinId: ish.magazinId }});
+                const sotuv = await Sotuv.findAll({ where: { magazinId: req.body.magazinId }});
                 const karz = await Savdo.findAll({ where: { magazinId: ish.magazinId , karz: { [Op.gt]: '0' }}});
                 const srok = await Savdo.findAll({ where: { magazinId: ish.magazinId , karz: { [Op.gt]: '0' }, srok: { [Op.lt]: req.body.date }}});
                 const zaqaz = await Zaqaz.findAll({ where: { magazinId: ish.magazinId }});
                 const karzina = await Karzina.findAll({ where: { magazinId: ish.magazinId }});
                 const magazin = await Magazin.findAll({ where: { id: ish.magazinId }});
-                return res.json({'code': 200, 'user': ish, 'magazin': magazin, 'mijoz': mijoz, 'savdo': savdo, 'zaqaz': zaqaz, 'karz': karz, 'karzina': karzina, 'srok': srok});
+                return res.json({'code': 200, 'user': ish, 'magazin': magazin, 'mijoz': mijoz, 'savdo': savdo, 'sotuv': sotuv, 'zaqaz': zaqaz, 'karz': karz, 'karzina': karzina, 'srok': srok});
             } else {
                 return res.json({'code': 0});
             }
         }
     }
-
-    // async DolgiCilent (req, res) {
-    //     const srok = await Savdo.findAll({ where: { magazinId: req.body.magazinId, karz: { [Op.gt]: '0' }, srok: { [Op.lt]: req.body.date }}});
-    //     if (srok.length > 0) {
-    //         for (let i = 0; i < srok.length; i++) {
-    //             var tekshir = '';
-    //             var msg = '';
-    //             const mijoz = await Mijoz.findByPk(srok[i].mijozId);
-    //             if (mijoz.summa > 0) {
-    //                 if (mijoz.valyuta) {
-    //                     if (srok[i].valyuta) {
-    //                         tekshir = srok[i].karz * srok[i].kurs / mijoz.kurs;
-    //                         if (mijoz.summa > tekshir) {
-    //                             mijoz.summa = mijoz.summa - tekshir;
-    //                             await mijoz.save();
-    //                             srok[i].karz = 0;
-    //                             await srok[i].save();
-    //                             if (req.body.magazinchat && mijoz.telegram) {
-    //                                 const karz2 =  await Savdo.findAll({ where: { magazinId: req.body.magazinId, mijozId: mijoz.id, karz: { [Op.gt]: '0' }}});
-    //                                 if (karz2) {
-    //                                     var tk = '';
-    //                                     for (let k = 0; k < karz2.length; k++) {
-    //                                         if (karz2[k].valyuta) {
-    //                                             tk += karz2[k].karz * karz2[k].kurs;
-    //                                         } else {
-    //                                             tk += karz2[k].karz;
-    //                                         }
-    //                                     }
-    //                                 } else { 
-    //                                     tk = 0;
-    //                                 }
-    //                                 msg = `Assalomu alaykum hurmatli mijoz sizning ${req.body.magazin} do'kon dan qarzinggiz muddati kelganligi uchun xisobinggizdan ${tekshir} ${mijoz.valyuta} yechib olindi. Hozirda xisobinggizda ${mijoz.summa} ${mijoz.valyuta} qoldi. Qolgan qarzinggiz ${tk} UZS. Biz bilan savdo qilganinggiz uchun tashakkur. Hurmat bilan ${req.body.magazin} jamosi`
-    //                                 axios({
-    //                                     method: 'post',
-    //                                     url: "https://api.telegram.org/bot" + req.body.magazinchat + "/sendMessage",
-    //                                     data: {
-    //                                         chat_id: mijoz.telegram,
-    //                                         text: msg
-    //                                     },
-    //                                 }); 
-    //                             } else { }    
-    //                         } else {
-    //                             var teksh = '';
-    //                             var mjsum = mijoz.summa;
-    //                             teksh = tekshir - mijoz.summa;
-    //                             mijoz.summa = 0;
-    //                             await mijoz.save();
-    //                             srok[i].karz = teksh;
-    //                             await srok[i].save();                                
-    //                             msg = `Assalomu alaykum hurmatli mijoz sizning ${req.body.magazin} do'kon dan qarzinggiz muddati kelganligi uchun xisobinggizdan ${teksh} ${mijoz.valyuta} yechib olindi. Hozirda xisobinggizda ${mijoz.summa} ${mijoz.valyuta} qoldi. Qolgan qarzinggiz ${tk} UZS. Biz bilan savdo qilganinggiz uchun tashakkur. Hurmat bilan ${req.body.magazin} jamosi`
-    //                             axios({
-    //                                 method: 'post',
-    //                                 url: "https://api.telegram.org/bot" + req.body.magazinchat + "/sendMessage",
-    //                                 data: {
-    //                                     chat_id: mijoz.telegram,
-    //                                     text: msg
-    //                                 },
-    //                             });
-    //                         }
-    //                     } else {
-    //                         tekshir = srok[i].karz / mijoz.kurs;
-    //                         if (mijoz.summa > tekshir) {
-    //                             mijoz.summa = mijoz.summa - tekshir;
-    //                             await mijoz.save();
-    //                             srok[i].karz = 0;
-    //                             await srok[i].save();
-    //                             if (req.body.magazinchat && mijoz.telegram) {
-    //                                 const karz2 =  await Savdo.findAll({ where: { magazinId: req.body.magazinId, mijozId: mijoz.id, karz: { [Op.gt]: '0' }}});
-    //                                 if (karz2) {
-    //                                     var tk3 = '';
-    //                                     for (let k = 0; k < karz2.length; k++) {
-    //                                         if (karz2[k].valyuta) {
-    //                                             tk3 += karz2[k].karz * karz2[k].kurs;
-    //                                         } else {
-    //                                             tk3 += karz2[k].karz;
-    //                                         }
-    //                                     }
-    //                                 } else { 
-    //                                     tk3 = 0;
-    //                                 }
-    //                                 msg = `Assalomu alaykum hurmatli mijoz sizning ${req.body.magazin} do'kon dan qarzinggiz muddati kelganligi uchun xisobinggizdan ${tekshir} ${mijoz.valyuta} yechib olindi. Hozirda xisobinggizda ${mijoz.summa} ${mijoz.valyuta} qoldi. Qolgan qarzinggiz ${tk3} UZS. Biz bilan savdo qilganinggiz uchun tashakkur. Hurmat bilan ${req.body.magazin} jamosi`
-    //                                 axios({
-    //                                     method: 'post',
-    //                                     url: "https://api.telegram.org/bot" + req.body.magazinchat + "/sendMessage",
-    //                                     data: {
-    //                                         chat_id: mijoz.telegram,
-    //                                         text: msg
-    //                                     },
-    //                                 }); 
-    //                             } else { }    
-    //                         } else {
-    //                             var teksh = '';
-    //                             var mjsum = mijoz.summa;
-    //                             teksh = tekshir - mijoz.summa;
-    //                             mijoz.summa = 0;
-    //                             await mijoz.save();
-    //                             srok[i].karz = teksh;
-    //                             await srok[i].save();                                
-    //                             msg = `Assalomu alaykum hurmatli mijoz sizning ${req.body.magazin} do'kon dan qarzinggiz muddati kelganligi uchun xisobinggizdan ${teksh} ${mijoz.valyuta} yechib olindi. Hozirda xisobinggizda ${mijoz.summa} ${mijoz.valyuta} qoldi. Qolgan qarzinggiz ${tk} UZS. Biz bilan savdo qilganinggiz uchun tashakkur. Hurmat bilan ${req.body.magazin} jamosi`
-    //                             axios({
-    //                                 method: 'post',
-    //                                 url: "https://api.telegram.org/bot" + req.body.magazinchat + "/sendMessage",
-    //                                 data: {
-    //                                     chat_id: mijoz.telegram,
-    //                                     text: msg
-    //                                 },
-    //                             });
-    //                         }
-    //                     }
-    //                 } else {
-    //                     if (srok[i].valyuta) {
-    //                         tekshir = srok[i].karz * srok[i].kurs;
-    //                         if (mijoz.summa > tekshir) {
-    //                             mijoz.summa = mijoz.summa - tekshir;
-    //                             await mijoz.save();
-    //                             srok[i].karz = 0;
-    //                             await srok[i].save();
-    //                             if (req.body.magazinchat && mijoz.telegram) {
-    //                                 const karz2 =  await Savdo.findAll({ where: { magazinId: req.body.magazinId, mijozId: mijoz.id, karz: { [Op.gt]: '0' }}});
-    //                                 if (karz2) {
-    //                                     var tk2 = '';
-    //                                     for (let k = 0; k < karz2.length; k++) {
-    //                                         if (karz2[k].valyuta) {
-    //                                             tk2 += karz2[k].karz * karz2[k].kurs;
-    //                                         } else {
-    //                                             tk2 += karz2[k].karz;
-    //                                         }
-    //                                     }
-    //                                 } else { 
-    //                                     tk2 = 0;
-    //                                 }
-    //                                 msg = `Assalomu alaykum hurmatli mijoz sizning ${req.body.magazin} do'kon dan qarzinggiz muddati kelganligi uchun xisobinggizdan ${tekshir} UZS yechib olindi. Hozirda xisobinggizda ${mijoz.summa} UZS qoldi. Qolgan qarzinggiz ${tk2} UZS. Biz bilan savdo qilganinggiz uchun tashakkur. Hurmat bilan ${req.body.magazin} jamosi`
-    //                                 axios({
-    //                                     method: 'post',
-    //                                     url: "https://api.telegram.org/bot" + req.body.magazinchat + "/sendMessage",
-    //                                     data: {
-    //                                         chat_id: mijoz.telegram,
-    //                                         text: msg
-    //                                     },
-    //                                 }); 
-    //                             } else { }    
-    //                         } else {
-    //                             var teksh = '';
-    //                             var mjsum = mijoz.summa;
-    //                             teksh = tekshir - mijoz.summa;
-    //                             mijoz.summa = 0;
-    //                             await mijoz.save();
-    //                             srok[i].karz = teksh;
-    //                             await srok[i].save();                                
-    //                             msg = `Assalomu alaykum hurmatli mijoz sizning ${req.body.magazin} do'kon dan qarzinggiz muddati kelganligi uchun xisobinggizdan ${teksh} UZS yechib olindi. Hozirda xisobinggizda ${mijoz.summa} UZS qoldi. Qolgan qarzinggiz ${tk} UZS. Biz bilan savdo qilganinggiz uchun tashakkur. Hurmat bilan ${req.body.magazin} jamosi`
-    //                             axios({
-    //                                 method: 'post',
-    //                                 url: "https://api.telegram.org/bot" + req.body.magazinchat + "/sendMessage",
-    //                                 data: {
-    //                                     chat_id: mijoz.telegram,
-    //                                     text: msg
-    //                                 },
-    //                             });
-    //                         }
-    //                     } else {
-    //                         tekshir = srok[i].karz;
-    //                         if (mijoz.summa > tekshir) {
-    //                             mijoz.summa = mijoz.summa - tekshir;
-    //                             await mijoz.save();
-    //                             srok[i].karz = 0;
-    //                             await srok[i].save();
-    //                             if (req.body.magazinchat && mijoz.telegram) {
-    //                                 const karz2 =  await Savdo.findAll({ where: { magazinId: req.body.magazinId, mijozId: mijoz.id, karz: { [Op.gt]: '0' }}});
-    //                                 if (karz2) {
-    //                                     var tk3 = '';
-    //                                     for (let k = 0; k < karz2.length; k++) {
-    //                                         if (karz2[k].valyuta) {
-    //                                             tk3 += karz2[k].karz * karz2[k].kurs;
-    //                                         } else {
-    //                                             tk3 += karz2[k].karz;
-    //                                         }
-    //                                     }
-    //                                 } else { 
-    //                                     tk3 = 0;
-    //                                 }
-    //                                 msg = `Assalomu alaykum hurmatli mijoz sizning ${req.body.magazin} do'kon dan qarzinggiz muddati kelganligi uchun xisobinggizdan ${tekshir} UZS yechib olindi. Hozirda xisobinggizda ${mijoz.summa} UZS qoldi. Qolgan qarzinggiz ${tk3} UZS. Biz bilan savdo qilganinggiz uchun tashakkur. Hurmat bilan ${req.body.magazin} jamosi`
-    //                                 axios({
-    //                                     method: 'post',
-    //                                     url: "https://api.telegram.org/bot" + req.body.magazinchat + "/sendMessage",
-    //                                     data: {
-    //                                         chat_id: mijoz.telegram,
-    //                                         text: msg
-    //                                     },
-    //                                 }); 
-    //                             } else { }    
-    //                         } else {
-    //                             var teksh = '';
-    //                             var mjsum = mijoz.summa;
-    //                             teksh = tekshir - mijoz.summa;
-    //                             mijoz.summa = 0;
-    //                             await mijoz.save();
-    //                             srok[i].karz = tekshir;
-    //                             await srok[i].save();                                
-    //                             msg = `Assalomu alaykum hurmatli mijoz sizning ${req.body.magazin} do'kon dan qarzinggiz muddati kelganligi uchun xisobinggizdan ${teksh} UZS yechib olindi. Hozirda xisobinggizda ${mijoz.summa} UZS qoldi. Qolgan qarzinggiz ${tk} UZS. Biz bilan savdo qilganinggiz uchun tashakkur. Hurmat bilan ${req.body.magazin} jamosi`
-    //                             axios({
-    //                                 method: 'post',
-    //                                 url: "https://api.telegram.org/bot" + req.body.magazinchat + "/sendMessage",
-    //                                 data: {
-    //                                     chat_id: mijoz.telegram,
-    //                                     text: msg
-    //                                 },
-    //                             });
-    //                         }
-    //                     }
-    //                 }
-    //             } else {
-    //                 var mk = '';
-    //                 const srok3 = await Savdo.findAll({ where: { magazinId: req.body.magazinId, mijozId: mijoz.id, karz: { [Op.gt]: '0' }, srok: { [Op.lt]: req.body.date }}});
-    //                 for (let m = 0; m < srok3.length; m++) {
-    //                     if (srok3.valyuta) {
-    //                         mk += srok3[m].karz * srok3[m].kurs;
-    //                     } else {
-    //                         mk += srok3[m].karz;
-    //                     }
-    //                 }
-    //                 msg = `Assalomu alaykum hurmatli mijoz sizning ${req.body.magazin} do'kon dan qarzinggizni belgilangan muddati keldi.To'lov summasi ${mk} UZS`
-    //                 axios({
-    //                     method: 'post',
-    //                     url: "https://api.telegram.org/bot" + req.body.magazinchat + "/sendMessage",
-    //                     data: {
-    //                         chat_id: mijoz.telegram,
-    //                         text: msg
-    //                     },
-    //                 });
-    //             }                
-    //         }
-    //     } else { }
-    //     return res.json(200);
-    // }
     
-    async DolgiCilent (date) {
+    async DolgiCilent (req, res) {
+        const date = req.body.date;
         const srok = await Savdo.findAll({ where: { karz: { [Op.gt]: '0' }, srok: { [Op.lt]: date }}});
         if (srok.length > 0) {
             for (let i = 0; i < srok.length; i++) {
@@ -604,21 +373,11 @@ class UserController extends UserController2 {
 
     async Valyuta_Get (req, res) {
         if (req.body.status == 'brend') {
-            if (req.body.search) {      
-                const data1 = await Valyuta.findAll({ where: { magazinId: req.body.magazinId, [Op.or]: [{ name: {[ Op.iRegexp ]: req.body.search }}]}});
-                return res.json({'obj': data1, 'valyuta': []});
-            } else {
-                const data2 = await Valyuta.findAll({ where: { magazinId: req.body.magazinId } });
-                return res.json({'obj': data2, 'valyuta': []});
-            }
+            const data2 = await Valyuta.findAll({ where: { magazinId: req.body.magazinId } });
+            return res.json({'obj': data2, 'valyuta': []});
         } else {
-            if (req.body.search) {
-                const data1 = await Valyuta.findAll({ where: { magazinId: req.body.magazinId, [Op.or]: [{ name: {[ Op.iRegexp ]: req.body.search }}]}});
-                return res.json({'obj': data1, 'valyuta': []});
-            } else {
-                const data2 = await Valyuta.findAll({ where: { magazinId: req.body.magazinId } });
-                return res.json({'obj': data2, 'valyuta': []});
-            }
+            const data2 = await Valyuta.findAll({ where: { magazinId: req.body.magazinId } });
+            return res.json({'obj': data2, 'valyuta': []});
         }
     }
 
@@ -809,13 +568,8 @@ class UserController extends UserController2 {
     }
 
     async Telv (req, res) {
-        if (req.body.search) {
-            const data1 = await Tovar.findAll({ where: { magazinId: req.body.magazinId, [Op.or]: [{ name: {[ Op.iRegexp ]: req.body.search }}]}});
-            return res.json(data1);
-        } else {
-            const data2 = await Tovar.findAll({ where: { magazinId: req.body.magazinId } });
-            return res.json(data2);
-        }   
+        const data2 = await Tovar.findAll({ where: { magazinId: req.body.magazinId } });
+        return res.json(data2);
     }
 
     async MijozTelv (req, res) {
@@ -825,54 +579,42 @@ class UserController extends UserController2 {
 
     async MijozGet (req, res) {
         if (req.body.status == 'brend') {
-            if (req.body.search) {
-                const data1 = await Mijoz.findAll({ where: { magazinId: req.body.magazinId, [Op.or]: [{ name: {[ Op.iRegexp ]: req.body.search }}]}});
-                const valyuta = await Valyuta.findAll({ where: { magazinId: req.body.magazinId } });    
-                return res.json({'obj': data1, 'valyuta': valyuta});
-            } else {
-                const data2 = await Mijoz.findAll({ where: { magazinId: req.body.magazinId } });
-                const valyuta = await Valyuta.findAll({ where: { magazinId: req.body.magazinId } });                
-                for (let i = 0; i < data2.length; i++) {
-                    data2[i].karz = 0;
-                    await data2[i].save();
-                    var sav = await Savdo.findAll({ where: { mijozId: data2[i].id }});
-                    for (let p = 0; p < sav.length; p++) {
-                        if (sav[p].valyuta) {
-                            data2[i].karz += parseFloat(sav[p].karz) * parseFloat(sav[p].kurs);
-                            await data2[i].save();                            
-                        } else {
-                            data2[i].karz += parseFloat(sav[p].karz);
-                            await data2[i].save();  
-                        }
+            const data2 = await Mijoz.findAll({ where: { magazinId: req.body.magazinId } });
+            const valyuta = await Valyuta.findAll({ where: { magazinId: req.body.magazinId } });                
+            for (let i = 0; i < data2.length; i++) {
+                data2[i].karz = 0;
+                await data2[i].save();
+                var sav = await Savdo.findAll({ where: { mijozId: data2[i].id }});
+                for (let p = 0; p < sav.length; p++) {
+                    if (sav[p].valyuta) {
+                        data2[i].karz += parseFloat(sav[p].karz) * parseFloat(sav[p].kurs);
+                        await data2[i].save();                            
+                    } else {
+                        data2[i].karz += parseFloat(sav[p].karz);
+                        await data2[i].save();  
                     }
                 }
-                return res.json({'obj': data2, 'valyuta': valyuta});
             }
+            return res.json({'obj': data2, 'valyuta': valyuta});
         } else {
-            const user = await Ishchilar.findOne({ where: { login: req.body.login, token: req.body.token }});
-            if (req.body.search) {      
-                const data1 = await Mijoz.findAll({ where: { magazinId: user.magazinId, [Op.or]: [{ name: {[ Op.iRegexp ]: req.body.search }}]}});
-                const valyuta = await Valyuta.findAll({ where: { magazinId: req.body.magazinId } });    
-                return res.json({'obj': data1, 'valyuta': valyuta});
-            } else {
-                const data2 = await Mijoz.findAll({ where: { magazinId: user.magazinId } });
-                const valyuta = await Valyuta.findAll({ where: { magazinId: req.body.magazinId } });
-                for (let i = 0; i < data2.length; i++) {
-                    data2[i].karz = 0;
-                    await data2[i].save();
-                    var sav = await Savdo.findAll({ where: { magazinId: data2[i].magazinId }});
-                    for (let p = 0; p < sav.length; p++) {
-                        if (sav[p].valyuta) {
-                            data2[i].karz += parseFloat(sav[p].karz) * parseFloat(sav[p].kurs);
-                            await data2[i].save();                            
-                        } else {
-                            data2[i].karz += parseFloat(sav[p].karz);
-                            await data2[i].save();  
-                        }
+            const user = await Ishchilar.findOne({ where: { login: req.body.login, token: req.body.token }});     
+            const data2 = await Mijoz.findAll({ where: { magazinId: user.magazinId } });
+            const valyuta = await Valyuta.findAll({ where: { magazinId: req.body.magazinId } });
+            for (let i = 0; i < data2.length; i++) {
+                data2[i].karz = 0;
+                await data2[i].save();
+                var sav = await Savdo.findAll({ where: { magazinId: data2[i].magazinId }});
+                for (let p = 0; p < sav.length; p++) {
+                    if (sav[p].valyuta) {
+                        data2[i].karz += parseFloat(sav[p].karz) * parseFloat(sav[p].kurs);
+                        await data2[i].save();                            
+                    } else {
+                        data2[i].karz += parseFloat(sav[p].karz);
+                        await data2[i].save();  
                     }
                 }
-                return res.json({'obj': data2, 'valyuta': valyuta});
             }
+            return res.json({'obj': data2, 'valyuta': valyuta});
         }
     }
 
@@ -959,31 +701,12 @@ class UserController extends UserController2 {
 
     async Gettip (req, res) {
         if (req.body.status == 'brend') {
-            if (req.body.search) {      
-                const data1 = await Tip.findAll({ where: { magazinId: req.body.magazinId, [Op.or]: [{ name: {[ Op.iRegexp ]: req.body.search }}]}});
-                return res.json({'obj': data1, 'valyuta': []});
-            } else {
-                const data2 = await Tip.findAll({ where: { magazinId: req.body.magazinId } });
-                return res.json({'obj': data2, 'valyuta': []});
-            }
+            const data2 = await Tip.findAll({ where: { magazinId: req.body.magazinId } });
+            return res.json({'obj': data2, 'valyuta': []});            
         } else {
             const user = await Ishchilar.findOne({ where: { login: req.body.login, token: req.body.token }});
-            if (req.body.search) {      
-                const data1 = await Tip.findAll({ where: { magazinId: user.magazinId, [Op.or]: [{ name: {[ Op.iRegexp ]: req.body.search }}]}});
-                return res.json({'obj': data1, 'valyuta': []});
-            } else {
-                const data2 = await Tip.findAll({ where: { magazinId: user.magazinId } });
-                return res.json({'obj': data2, 'valyuta': []});
-            }
-        }
-    }
-
-    async Variant(req, res) {
-        if (req.body.tip) {
-            const data1 = await Tip.findAll({ where: { magazinId: req.body.magazinId, [Op.or]: [{ name: {[ Op.iRegexp ]: req.body.tip }}]}});
-            return res.json(data1);
-        } else {
-            return res.json([]);
+            const data2 = await Tip.findAll({ where: { magazinId: user.magazinId } });
+            return res.json({'obj': data2, 'valyuta': []});
         }
     }
 
@@ -1038,26 +761,14 @@ class UserController extends UserController2 {
 
     async Getyetkaz(req, res) {
         if (req.body.status == 'brend') {
-            if (req.body.search) {      
-                const data1 = await Yetkazuvchi.findAll({ where: {magazinId: req.body.magazinId, [Op.or]: [{ name: {[ Op.iRegexp ]: req.body.search }}]}});
-                const valyuta = await Valyuta.findAll({ where: { magazinId: req.body.magazinId } });    
-                return res.json({'obj': data1, 'valyuta': valyuta});
-            } else {
                 const data2 = await Yetkazuvchi.findAll({ where: {magazinId: req.body.magazinId } });
                 const valyuta = await Valyuta.findAll({ where: { magazinId: req.body.magazinId } });    
                 return res.json({'obj': data2, 'valyuta': valyuta});
-            }
         } else {
             const user = await Ishchilar.findOne({ where: { login: req.body.login, token: req.body.token }});
-            if (req.body.search) {      
-                const data1 = await Yetkazuvchi.findAll({ where: { magazinId: user.magazinId, [Op.or]: [{ name: {[ Op.iRegexp ]: req.body.search }}]}});
-                const valyuta = await Valyuta.findAll({ where: { magazinId: req.body.magazinId } });    
-                return res.json({'obj': data1, 'valyuta': valyuta});
-            } else {
-                const data2 = await Yetkazuvchi.findAll({ where: { magazinId: user.magazinId } });
-                const valyuta = await Valyuta.findAll({ where: { magazinId: req.body.magazinId } });    
-                return res.json({'obj': data2, 'valyuta': valyuta});
-            }
+            const data2 = await Yetkazuvchi.findAll({ where: { magazinId: user.magazinId } });
+            const valyuta = await Valyuta.findAll({ where: { magazinId: req.body.magazinId } });    
+            return res.json({'obj': data2, 'valyuta': valyuta});
         }
     }
 
@@ -1169,24 +880,14 @@ class UserController extends UserController2 {
             const data2 = await Yetkazuvchi.findAll({ where: { magazinId: req.body.magazinId } });
             const data3 = await Tovar.findAll({ where: { magazinId: req.body.magazinId } });
             const data4 = await Valyuta.findAll({ where: { magazinId: req.body.magazinId } });
-            if (req.body.search) {      
-                const data1 = await Tovar.findAll({ where: { magazinId: req.body.magazinId, [Op.or]: [{ name: {[ Op.iRegexp ]: req.body.search }}]}});
-                return res.json({'data': data, 'data2': data2, 'data3': data1, 'data4': data4});
-            } else {
-                return res.json({'data': data, 'data2': data2, 'data3': data3, 'data4': data4});
-            }
+            return res.json({'data': data, 'data2': data2, 'data3': data3, 'data4': data4});
         } else {
             const user = await Ishchilar.findOne({ where: { login: req.body.login, token: req.body.token }});
             const data = await Tip.findAll({ where: { magazinId: user.magazinId } });
             const data2 = await Yetkazuvchi.findAll({ where: { magazinId: user.magazinId } });
             const data3 = await Tovar.findAll({ where: { magazinId: user.magazinId } });
             const data4 = await Valyuta.findAll({ where: { magazinId: user.magazinId } });
-            if (req.body.search) {      
-                const data1 = await Tovar.findAll({ where: { magazinId: user.magazinId, [Op.or]: [{ name: {[ Op.iRegexp ]: req.body.search }}]}});
-                return res.json({'data': data, 'data2': data2, 'data3': data1, 'data4': data4});
-            } else {
-                return res.json({'data': data, 'data2': data2, 'data3': data3, 'data4': data4});
-            }
+            return res.json({'data': data, 'data2': data2, 'data3': data3, 'data4': data4});
         }
     }
 
@@ -1377,26 +1078,14 @@ class UserController extends UserController2 {
 
     async Chiqim_get(req, res){
         if (req.body.status == 'brend') {
-            if (req.body.search) {      
-                const data1 = await Chiqim.findAll({ where: { magazinId: req.body.magazinId, [Op.or]: [{ qayerga: {[ Op.iRegexp ]: req.body.search }}]}});
-                const valyuta = await Valyuta.findAll({ where: { magazinId: req.body.magazinId } });    
-                return res.json({'obj': data1, 'valyuta': valyuta});
-            } else {
-                const data2 = await Chiqim.findAll({ where: { magazinId: req.body.magazinId } });
-                const valyuta = await Valyuta.findAll({ where: { magazinId: req.body.magazinId } });    
-                return res.json({'obj': data2, 'valyuta': valyuta});
-            }
+            const data2 = await Chiqim.findAll({ where: { magazinId: req.body.magazinId } });
+            const valyuta = await Valyuta.findAll({ where: { magazinId: req.body.magazinId } });    
+            return res.json({'obj': data2, 'valyuta': valyuta});
         } else {
             const user = await Ishchilar.findOne({ where: { login: req.body.login, token: req.body.token }});
-            if (req.body.search) {      
-                const data1 = await Chiqim.findAll({ where: { magazinId: user.magazinId, [Op.or]: [{ qayerga: {[ Op.iRegexp ]: req.body.search }}]}});
-                const valyuta = await Valyuta.findAll({ where: { magazinId: req.body.magazinId } });    
-                return res.json({'obj': data1, 'valyuta': valyuta});
-            } else {
-                const data2 = await Chiqim.findAll({ where: { magazinId: user.magazinId } });
-                const valyuta = await Valyuta.findAll({ where: { magazinId: req.body.magazinId } });    
-                return res.json({'obj': data2, 'valyuta': valyuta});
-            }
+            const data2 = await Chiqim.findAll({ where: { magazinId: user.magazinId } });
+            const valyuta = await Valyuta.findAll({ where: { magazinId: req.body.magazinId } });    
+            return res.json({'obj': data2, 'valyuta': valyuta});
         }
     }
 
@@ -1889,7 +1578,7 @@ class UserController extends UserController2 {
             }
             for (let i4 = 0; i4 < yetkazuvchi.length; i4++) {
                 if (yetkazuvchi[i4].valyuta) {
-                    yet += parseFloat(yetkazuvchi[i4].summa) * parseFloat(yetkazuvchi[i4].kurs);   
+                    yet += parseFloat(yetkazuvchi[i4].summa) * parseFloat(yetkazuvchi[i4].kurs);
                 } else {
                     yet += parseFloat(yetkazuvchi[i4].summa);
                 }
@@ -1898,7 +1587,7 @@ class UserController extends UserController2 {
                 if (tovar[i5].valyuta) {
                     sql += parseFloat(tovar[i5].olinish) * parseFloat(tovar[i5].summa) * parseFloat(tovar[i5].soni);   
                 } else {
-                    sql += parseFloat(tovar[i5].olinish) * parseFloat(tovar[i5].soni);                    
+                    sql += parseFloat(tovar[i5].olinish) * parseFloat(tovar[i5].soni);
                 }
             }
             for (let i6 = 0; i6 < mijoz.length; i6++) {

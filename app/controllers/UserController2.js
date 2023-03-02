@@ -16,6 +16,12 @@ class UserController2 extends ExcelController {
         }
     }
 
+    async Zaqazlar(req, res){
+        const zaqaz = await Zaqaz.findAll({ where: { magazinId: req.body.magazinId }});
+        const karzina = await Karzina.findAll({ where: { magazinId: req.body.magazinId }});
+        return res.json({'code': 200, 'zaqaz': zaqaz, 'karzina': karzina});
+    }
+
     async Foyda_Post_Bugun (req, res) {
         var sav = 0;
         var ol = 0;
