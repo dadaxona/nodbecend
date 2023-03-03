@@ -1,4 +1,4 @@
-const { User, Tip, Tovar, Mijoz, Ishchilar, Yetkazuvchi, Valyuta, Chiqim, Savdo, Sotuv, Karzina, Zaqaz, Magazin, Yetkazuvchiarxiv } = require('../../models');
+const { User, Tip, Tovar, Mijoz, Ishchilar, Yetkazuvchi, Valyuta, Chiqim, Savdo, Sotuv, Karzina, Zaqaz, Magazin, Yetkazuvchiarxiv, Jonatma } = require('../../models');
 const { Op } = require("sequelize");
 const UserController2 = require('./UserController2');
 const e = require('express');
@@ -41,6 +41,7 @@ class UserController extends UserController2 {
         await Yetkazuvchi.destroy({ where: { userId: req.body.id } });
         await Valyuta.destroy({ where: { userId: req.body.id } });
         await Ishchilar.destroy({ where: { userId: req.body.id } });
+        await Jonatma.destroy({ where: { userId: req.body.id } });
         await User.destroy({ where: { id: req.body.id } });
         return res.json(200);
     }
@@ -57,8 +58,9 @@ class UserController extends UserController2 {
                     const srok = await Savdo.findAll({ where: { magazinId: req.body.magazinId , karz: { [Op.gt]: '0' }, srok: { [Op.lt]: req.body.date }}});
                     const zaqaz = await Zaqaz.findAll({ where: { magazinId: req.body.magazinId }});
                     const karzina = await Karzina.findAll({ where: { magazinId: req.body.magazinId }});
+                    const jonatma = await Jonatma.findAll({ where: { magazinId: req.body.magazinId }});
                     const magazin = await Magazin.findAll({ where: { userId: user.id }});
-                    return res.json({'code': 200, 'user': user, 'magazin': magazin, 'mijoz': mijoz, 'savdo': savdo, 'sotuv': sotuv, 'zaqaz': zaqaz, 'karz': karz, 'karzina': karzina, 'srok': srok});
+                    return res.json({'code': 200, 'user': user, 'magazin': magazin, 'mijoz': mijoz, 'jonatma': jonatma, 'savdo': savdo, 'sotuv': sotuv, 'zaqaz': zaqaz, 'karz': karz, 'karzina': karzina, 'srok': srok});
                 } else {
                     return res.json({'code': 0});
                 }                
@@ -76,8 +78,9 @@ class UserController extends UserController2 {
                 const srok = await Savdo.findAll({ where: { magazinId: ish.magazinId , karz: { [Op.gt]: '0' }, srok: { [Op.lt]: req.body.date }}});
                 const zaqaz = await Zaqaz.findAll({ where: { magazinId: ish.magazinId }});
                 const karzina = await Karzina.findAll({ where: { magazinId: ish.magazinId }});
+                const jonatma = await Jonatma.findAll({ where: { magazinId: req.body.magazinId }});
                 const magazin = await Magazin.findAll({ where: { id: ish.magazinId }});
-                return res.json({'code': 200, 'user': ish, 'magazin': magazin, 'mijoz': mijoz, 'savdo': savdo, 'sotuv': sotuv, 'zaqaz': zaqaz, 'karz': karz, 'karzina': karzina, 'srok': srok});
+                return res.json({'code': 200, 'user': ish, 'magazin': magazin, 'mijoz': mijoz, 'jonatma': jonatma, 'savdo': savdo, 'sotuv': sotuv, 'zaqaz': zaqaz, 'karz': karz, 'karzina': karzina, 'srok': srok});
             } else {
                 return res.json({'code': 0});
             }

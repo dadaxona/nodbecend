@@ -1,5 +1,5 @@
 const ExcelController = require('./ExcelController');
-const { User, Tip, Tovar, Mijoz, Yetkazuvchi, Valyuta, Chiqim, Savdo, Sotuv, Karzina, Zaqaz } = require('../../models');
+const { User, Tip, Tovar, Mijoz, Yetkazuvchi, Valyuta, Chiqim, Savdo, Sotuv, Karzina, Zaqaz, Magazin, Jonatma } = require('../../models');
 const { Op } = require("sequelize");
 class UserController2 extends ExcelController {
 
@@ -20,6 +20,140 @@ class UserController2 extends ExcelController {
         const zaqaz = await Zaqaz.findAll({ where: { magazinId: req.body.magazinId }});
         const karzina = await Karzina.findAll({ where: { magazinId: req.body.magazinId }});
         return res.json({'code': 200, 'zaqaz': zaqaz, 'karzina': karzina});
+    }
+
+    async Magadb (req, res) {
+        const dbsql = await Magazin.findByPk(req.body.sql);
+        if (dbsql) {
+            const user = User.findByPk(dbsql.userId);
+            for (let i = 0; i < req.body.databd.length; i++) {
+                await Jonatma.create({
+                    userId: user.id,
+                    magazinId: dbsql.id,
+                    magazin: dbsql.name,
+                    tip: req.body.databd[i].tip,
+                    adress: req.body.magazin,
+                    name: req.body.databd[i].name,
+                    ogoh: req.body.databd[i].ogoh,
+                    soni: req.body.databd[i].soni,
+                    olinish: req.body.databd[i].olinish,
+                    sotilish: "",
+                    sotilish2: "",
+                    valyuta: req.body.databd[i].valyuta,
+                    summa: req.body.databd[i].summa,
+                    kod: req.body.databd[i].kod                
+                });
+            }
+            return res.json({'code': 200});
+        } else {}
+    }
+
+    async Sqldbpost (req, res) {
+        const db = await Jonatma.findAll({ where: { magazinId: req.body.magazinId }});
+        for (let i = 0; i < db.length; i++) {
+            const tov = await Tovar.findOne({ where: { magazinId: req.body.magazinId, tip: db[i].tip, adress: db[i].adress, name: db[i].name }});
+            if (tov) {
+                if (db[i].sotilish && db[i].sotilish2) {
+                    const rbt = await Tip.findOne({ where: { magazinId: req.body.magazinId, name: db[i].tip }});
+                    const yetkazuvchi = await Yetkazuvchi.findOne({ where: { magazinId: req.body.magazinId, name: db[i].adress }});
+                    if (rbt) {
+                    } else {
+                        await Tip.create({
+                            userId: db[i].userId,
+                            magazinId: db[i].magazinId,
+                            magazin: db[i].magazin,
+                            name: db[i].tip
+                        }); 
+                    }
+                    if (yetkazuvchi) {                        
+                    } else {
+                        await Yetkazuvchi.create({
+                            userId: db[i].userId,
+                            magazinId: db[i].magazinId,
+                            magazin: db[i].magazin,
+                            name: db[i].adress,
+                            summa: 0,
+                        }); 
+                    }
+                    tov.soni = parseFloat(tov.soni) + parseFloat(db[i].soni);
+                    tov.ogoh = db[i].ogoh,
+                    tov.olinish = db[i].olinish,
+                    tov.sotilish = db[i].sotilish,
+                    tov.sotilish2 = db[i].sotilish2,
+                    tov.valyuta = db[i].valyuta,
+                    tov.summa = db[i].summa,
+                    tov.kod = db[i].kod
+                    await tov.save();
+                    await db[i].destroy();
+                } else {}
+            } else {
+                if (db[i].sotilish && db[i].sotilish2) {
+                    const rbt = await Tip.findOne({ where: { magazinId: req.body.magazinId, name: db[i].tip }});
+                    const yetkazuvchi = await Yetkazuvchi.findOne({ where: { magazinId: req.body.magazinId, name: db[i].adress }});
+                    if (rbt) {
+                    } else {
+                        await Tip.create({
+                            userId: db[i].userId,
+                            magazinId: db[i].magazinId,
+                            magazin: db[i].magazin,
+                            name: db[i].tip
+                        }); 
+                    }
+                    if (yetkazuvchi) {                        
+                    } else {
+                        await Yetkazuvchi.create({
+                            userId: db[i].userId,
+                            magazinId: db[i].magazinId,
+                            magazin: db[i].magazin,
+                            name: db[i].adress,
+                            summa: 0,
+                        }); 
+                    }
+                    await Tovar.create({
+                        userId: db[i].userId,
+                        magazinId: db[i].magazinId,
+                        magazin: db[i].magazin,
+                        tip: db[i].tip,
+                        adress: db[i].adress,
+                        name: db[i].name,
+                        ogoh: db[i].ogoh,
+                        soni: db[i].soni,
+                        olinish: db[i].olinish,
+                        sotilish: db[i].sotilish,
+                        sotilish2: db[i].sotilish2,
+                        valyuta: db[i].valyuta,
+                        summa: db[i].summa,
+                        kod: db[i].kod
+                    });
+                    await db[i].destroy();
+                } else {}
+            }
+        }
+        const db2 = await Jonatma.findAll({ where: { magazinId: req.body.magazinId }});
+        return res.json(db2)
+    }
+
+    async Olishdb (req, res) {
+        const db = await Jonatma.findAll({ where: { magazinId: req.body.magazinId }});
+        if (db) {
+            return res.json(db);
+        } else {}
+    }
+
+    async Sqlad_dbpost (req, res) {
+        await Jonatma.update(req.body,
+        { where: { id: req.body.id} }
+        );
+        const db = await Jonatma.findAll({ where: { magazinId: req.body.magazinId }});
+        return res.json(db);
+    }
+
+    async Sqlad_deletedb (req, res) {
+        await Jonatma.destroy({
+            where: { id: req.body.id }
+        });
+        const db = await Jonatma.findAll({ where: { magazinId: req.body.magazinId }});
+        return res.json(db);
     }
 
     async Foyda_Post_Bugun (req, res) {
