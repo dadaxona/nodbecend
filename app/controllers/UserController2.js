@@ -1,5 +1,5 @@
 const ExcelController = require('./ExcelController');
-const { User, Tip, Tovar, Mijoz, Yetkazuvchi, Valyuta, Chiqim, Savdo, Sotuv, Karzina, Zaqaz, Magazin, Jonatma } = require('../../models');
+const { User, Tip, Tovar, Mijoz, Yetkazuvchi, Valyuta, Chiqim, Savdo, Sotuv, Karzina, Zaqaz, Magazin, Jonatma, Yetkazuvchiarxiv } = require('../../models');
 const { Op } = require("sequelize");
 class UserController2 extends ExcelController {
 
@@ -19,7 +19,8 @@ class UserController2 extends ExcelController {
     async Zaqazlar(req, res){
         const zaqaz = await Zaqaz.findAll({ where: { magazinId: req.body.magazinId }});
         const karzina = await Karzina.findAll({ where: { magazinId: req.body.magazinId }});
-        return res.json({'code': 200, 'zaqaz': zaqaz, 'karzina': karzina});
+        const jonatma = await Jonatma.findAll({ where: { magazinId: req.body.magazinId }});
+        return res.json({'code': 200, 'zaqaz': zaqaz, 'karzina': karzina, 'jonatma': jonatma});
     }
 
     async Magadb (req, res) {
@@ -27,6 +28,9 @@ class UserController2 extends ExcelController {
         if (dbsql) {
             const user = User.findByPk(dbsql.userId);
             for (let i = 0; i < req.body.databd.length; i++) {
+                const tovars = await Tovar.findByPk(req.body.databd[i].id);
+                tovars.soni = parseFloat(tovars.soni) - parseFloat(req.body.databd[i].soni);
+                await tovars.save();
                 await Jonatma.create({
                     userId: user.id,
                     magazinId: dbsql.id,
@@ -65,15 +69,45 @@ class UserController2 extends ExcelController {
                             name: db[i].tip
                         }); 
                     }
-                    if (yetkazuvchi) {                        
+                    if (yetkazuvchi) {
+                        var javob = '';
+                        javob = parseFloat(db[i].soni) * parseFloat(db[i].olinish);
+                        await Yetkazuvchiarxiv.create({
+                            userId: db[i].userId,
+                            magazinId: db[i].magazinId,
+                            magazin: db[i].magazin,
+                            yetkazuvchiId: yetkazuvchi.id,
+                            name: yetkazuvchi.name,
+                            soni: db[i].soni,
+                            summa: db[i].olinish,
+                            jami: javob,
+                            sana: req.body.date,
+                            kurs: db[i].summa,
+                            valyuta: db[i].valyuta,
+                        });           
                     } else {
-                        await Yetkazuvchi.create({
+                        const ye = await Yetkazuvchi.create({
                             userId: db[i].userId,
                             magazinId: db[i].magazinId,
                             magazin: db[i].magazin,
                             name: db[i].adress,
                             summa: 0,
-                        }); 
+                        });
+                        var javob = '';
+                        javob = parseFloat(db[i].soni) * parseFloat(db[i].olinish);
+                        await Yetkazuvchiarxiv.create({
+                            userId: db[i].userId,
+                            magazinId: db[i].magazinId,
+                            magazin: db[i].magazin,
+                            yetkazuvchiId: ye.id,
+                            name: ye.name,
+                            soni: db[i].soni,
+                            summa: db[i].olinish,
+                            jami: javob,
+                            sana: req.body.date,
+                            kurs: db[i].summa,
+                            valyuta: db[i].valyuta,
+                        });
                     }
                     tov.soni = parseFloat(tov.soni) + parseFloat(db[i].soni);
                     tov.ogoh = db[i].ogoh,
@@ -99,15 +133,45 @@ class UserController2 extends ExcelController {
                             name: db[i].tip
                         }); 
                     }
-                    if (yetkazuvchi) {                        
+                    if (yetkazuvchi) {
+                        var javob = '';
+                        javob = parseFloat(db[i].soni) * parseFloat(db[i].olinish);
+                        await Yetkazuvchiarxiv.create({
+                            userId: db[i].userId,
+                            magazinId: db[i].magazinId,
+                            magazin: db[i].magazin,
+                            yetkazuvchiId: yetkazuvchi.id,
+                            name: yetkazuvchi.name,
+                            soni: db[i].soni,
+                            summa: db[i].olinish,
+                            jami: javob,
+                            sana: req.body.date,
+                            kurs: db[i].summa,
+                            valyuta: db[i].valyuta,
+                        });
                     } else {
-                        await Yetkazuvchi.create({
+                        const ye = await Yetkazuvchi.create({
                             userId: db[i].userId,
                             magazinId: db[i].magazinId,
                             magazin: db[i].magazin,
                             name: db[i].adress,
                             summa: 0,
-                        }); 
+                        });
+                        var javob = '';
+                        javob = parseFloat(db[i].soni) * parseFloat(db[i].olinish);
+                        await Yetkazuvchiarxiv.create({
+                            userId: db[i].userId,
+                            magazinId: db[i].magazinId,
+                            magazin: db[i].magazin,
+                            yetkazuvchiId: ye.id,
+                            name: ye.name,
+                            soni: db[i].soni,
+                            summa: db[i].olinish,
+                            jami: javob,
+                            sana: req.body.date,
+                            kurs: db[i].summa,
+                            valyuta: db[i].valyuta,
+                        });
                     }
                     await Tovar.create({
                         userId: db[i].userId,
