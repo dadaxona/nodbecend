@@ -503,6 +503,11 @@ class UserController extends UserController2 {
         return res.json(kassa);
     }
 
+    async Kassa_post_oy (req, res) {
+        await Ishchilar.update(req.body.item, { where: { id: req.body.item.id }});
+        return res.json(200);
+    }
+
     async Kassa_Creat(req, res){
         const user = await User.findOne({ where: { login: req.body.login, token: req.body.token }});
         const magazin = await Magazin.findByPk(req.body.magazinId);

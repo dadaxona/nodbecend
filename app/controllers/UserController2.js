@@ -1,5 +1,5 @@
 const ExcelController = require('./ExcelController');
-const { User, Tip, Tovar, Mijoz, Yetkazuvchi, Valyuta, Chiqim, Savdo, Sotuv, Karzina, Zaqaz, Magazin, Jonatma, Yetkazuvchiarxiv } = require('../../models');
+const { User, Tip, Tovar, Mijoz, Yetkazuvchi, Oylikdata, Oyliklar, Valyuta, Chiqim, Savdo, Sotuv, Karzina, Zaqaz, Magazin, Jonatma, Yetkazuvchiarxiv } = require('../../models');
 const { Op } = require("sequelize");
 class UserController2 extends ExcelController {
 
@@ -14,6 +14,73 @@ class UserController2 extends ExcelController {
         } else {
             return res.json(404);
         }
+    }
+
+    async Oylik_create (req, res) {
+        if (req.body.status == 'brend') {
+            const user = await User.findOne({ where: { login: req.body.login, token: req.body.token }});
+            const date = await Oylikdata.findOne({ where: { ishchilarId: req.body.id, sana: req.body.date2 }});
+            if (req.body.ishchilarId) {
+                await Oyliklar.update(req.body, { where: {id: req.body.ishchilarId}});
+            } else {
+                if (date) {
+                    await Oyliklar.create({
+                        userId: user.id,
+                        magazinId: date.magazinId,
+                        magazin: date.magazin,
+                        oylikdataId: date.id,
+                        ishchilarId: date.ishchilarId,
+                        name: req.body.name,
+                        sana: req.body.sana,
+                        koment: req.body.koment,
+                        summa: req.body.summa,
+                        valyuta: req.body.valyuta,
+                        kurs: req.body.kurs
+                    });
+                } else {
+                    const date2 = await Oylikdata.create({
+                        userId: user.id,
+                        magazinId: req.body.magazinId,
+                        magazin: req.body.magazin,
+                        ishchilarId: req.body.id,
+                        sana: req.body.date2,
+                    });
+                    await Oyliklar.create({
+                        userId: user.id,
+                        magazinId: date2.magazinId,
+                        magazin: date2.magazin,
+                        oylikdataId: date2.id,
+                        ishchilarId: date2.ishchilarId,
+                        name: req.body.name,
+                        sana: req.body.sana,
+                        koment: req.body.koment,
+                        summa: req.body.summa,
+                        valyuta: req.body.valyuta,
+                        kurs: req.body.kurs
+                    });
+                }
+            }
+        } else {}
+        return res.json(200);
+    }
+
+    async Oylikget (req, res) {
+        const oyliklar = await Oyliklar.findAll({ where: { magazinId: req.body.magazinId, ishchilarId: req.body.id }});
+        await Oylikdata.update({ jami: 0 },{ where: {ishchilarId: req.body.id }});
+        for (let i = 0; i < oyliklar.length; i++) {
+            // const oylikdata = await Oylikdata.findOne({ where: { magazinId: req.body.magazinId, id: oyliklar[i].oylikdataId }});
+            const oylikdata = await Oylikdata.findByPk(oyliklar[i].oylikdataId);
+            if (oyliklar[i].valyuta) {
+                oylikdata.jami = parseFloat(oylikdata.jami) + parseFloat(oyliklar[i].summa) * parseFloat(oyliklar[i].kurs);
+                await oylikdata.save();
+            } else {
+                oylikdata.jami = parseFloat(oylikdata.jami) + parseFloat(oyliklar[i].summa);
+                await oylikdata.save();
+            }            
+        }
+        const oylikdata2 = await Oylikdata.findAll({ where: { ishchilarId: req.body.id }});
+        const data2 = await Valyuta.findAll({ where: { magazinId: req.body.magazinId } });
+        return res.json({'oylikdata': oylikdata2, 'oyliklar': oyliklar, 'valyuta':data2});
     }
 
     async Zaqazlar(req, res){
