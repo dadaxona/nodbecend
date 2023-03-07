@@ -671,6 +671,30 @@ class UserController extends UserController2 {
         return res.json(200);
     }
 
+    async Mijozbalansdel (req, res) {
+        const mijoz =  await Mijoz.findByPk(req.body.id);
+        const mijoz2 =  await Mijozdata.findByPk(req.body.id2);
+        if (mijoz.valyuta) {
+            if (mijoz2.valyuta) {
+                mijoz.summa = parseFloat(mijoz.summa) - parseFloat(mijoz2.summa) * parseFloat(mijoz2.kurs) / parseFloat(mijoz.kurs);
+                await mijoz.save();
+            } else {
+                mijoz.summa = parseFloat(mijoz.summa) - parseFloat(mijoz2.summa) / parseFloat(mijoz.kurs);
+                await mijoz.save();
+            }            
+        } else {
+            if (mijoz2.valyuta) {
+                mijoz.summa = parseFloat(mijoz.summa) - parseFloat(mijoz2.summa) * parseFloat(mijoz2.kurs);
+                await mijoz.save();
+            } else {
+                mijoz.summa = parseFloat(mijoz.summa) - parseFloat(mijoz2.summa);
+                await mijoz.save();
+            }
+        }
+        await mijoz2.destroy();
+        return res.json(200);
+    }
+
     async MijozGet (req, res) {
         if (req.body.status == 'brend') {
             const data2 = await Mijoz.findAll({ where: { magazinId: req.body.magazinId } });

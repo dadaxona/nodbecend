@@ -37,6 +37,7 @@ route.post('/mijozbalans', UserController.Mijozbalans)
 route.post('/mijozget', UserController.MijozGet)
 route.post('/mijozcreate', UserController.Mijozcreate)
 route.post('/mijozdelete', UserController.MijozDelete)
+route.post('/mijozbalansdel', UserController.Mijozbalansdel)
 
 route.post('/getvalyuta', UserController.Valyuta_Get)
 route.post('/post_update_valyuta', UserController.Valyuta_Create_Update)
