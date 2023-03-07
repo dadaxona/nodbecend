@@ -1,4 +1,4 @@
-const { User, Tip, Tovar, Mijoz, Ishchilar, Yetkazuvchi, Valyuta, Chiqim, Savdo, Sotuv, Karzina, Zaqaz, Magazin, Yetkazuvchiarxiv, Jonatma } = require('../../models');
+const { User, Tip, Tovar, Mijoz, Ishchilar, Yetkazuvchi, Valyuta, Chiqim, Savdo, Sotuv, Karzina, Zaqaz, Magazin, Yetkazuvchiarxiv, Jonatma, Mijozdata } = require('../../models');
 const { Op } = require("sequelize");
 const UserController2 = require('./UserController2');
 const e = require('express');
@@ -583,6 +583,92 @@ class UserController extends UserController2 {
     async MijozTelv (req, res) {
         const data2 = await Mijoz.findAll({ where: { magazinId: req.body.magazinId } });
         return res.json(data2);  
+    }
+
+    async MijozbalansGet (req, res) {
+        const data2 = await Mijozdata.findAll({ where: { magazinId: req.body.magazinId,  mijozId: req.body.id, }});
+        return res.json(data2);  
+    }
+
+    async Mijozbalans (req, res) {
+        if (req.body.id2) {
+            const mijoz =  await Mijoz.findByPk(req.body.id);
+            const mijoz2 =  await Mijozdata.findByPk(req.body.id2);
+            if (mijoz.valyuta) {
+                if (mijoz2.valyuta) {
+                    mijoz.summa = parseFloat(mijoz.summa) - parseFloat(mijoz2.summa) * parseFloat(mijoz2.kurs) / parseFloat(mijoz.kurs);
+                    await mijoz.save();
+                } else {
+                    mijoz.summa = parseFloat(mijoz.summa) - parseFloat(mijoz2.summa) / parseFloat(mijoz.kurs);
+                    await mijoz.save();
+                }            
+            } else {
+                if (mijoz2.valyuta) {
+                    mijoz.summa = parseFloat(mijoz.summa) - parseFloat(mijoz2.summa) * parseFloat(mijoz2.kurs);
+                    await mijoz.save();
+                } else {
+                    mijoz.summa = parseFloat(mijoz.summa) - parseFloat(mijoz2.summa);
+                    await mijoz.save();
+                }
+            }
+            await Mijozdata.update({
+                userId: mijoz.userId,
+                magazinId: mijoz.magazinId,
+                magazin: mijoz.magazin,
+                mijozId: mijoz.id,
+                date: req.body.sana,
+                summa: req.body.summa,
+                kurs: req.body.kurs,
+                valyuta: req.body.valyuta
+            }, { where: { id:  req.body.id2 }});
+            if (mijoz.valyuta) {
+                if (req.body.valyuta) {
+                    mijoz.summa = parseFloat(mijoz.summa) + parseFloat(req.body.summa) * parseFloat(req.body.kurs) / parseFloat(mijoz.kurs);
+                    await mijoz.save();
+                } else {
+                    mijoz.summa = parseFloat(mijoz.summa) + parseFloat(req.body.summa) / parseFloat(mijoz.kurs);
+                    await mijoz.save();
+                }            
+            } else {
+                if (req.body.valyuta) {
+                    mijoz.summa = parseFloat(mijoz.summa) + parseFloat(req.body.summa) * parseFloat(req.body.kurs);
+                    await mijoz.save();
+                } else {
+                    mijoz.summa = parseFloat(mijoz.summa) + parseFloat(req.body.summa);
+                    await mijoz.save();
+                }   
+            }
+        } else {
+            const mijoz =  await Mijoz.findByPk(req.body.id);
+            await Mijozdata.create({
+                userId: mijoz.userId,
+                magazinId: mijoz.magazinId,
+                magazin: mijoz.magazin,
+                mijozId: mijoz.id,
+                date: req.body.sana,
+                summa: req.body.summa,
+                kurs: req.body.kurs,
+                valyuta: req.body.valyuta
+            });
+            if (mijoz.valyuta) {
+                if (req.body.valyuta) {
+                    mijoz.summa = parseFloat(mijoz.summa) + parseFloat(req.body.summa) * parseFloat(req.body.kurs) / parseFloat(mijoz.kurs);
+                    await mijoz.save();
+                } else {
+                    mijoz.summa = parseFloat(mijoz.summa) + parseFloat(req.body.summa) / parseFloat(mijoz.kurs);
+                    await mijoz.save();
+                }            
+            } else {
+                if (req.body.valyuta) {
+                    mijoz.summa = parseFloat(mijoz.summa) + parseFloat(req.body.summa) * parseFloat(req.body.kurs);
+                    await mijoz.save();
+                } else {
+                    mijoz.summa = parseFloat(mijoz.summa) + parseFloat(req.body.summa);
+                    await mijoz.save();
+                }   
+            }
+        }
+        return res.json(200);
     }
 
     async MijozGet (req, res) {

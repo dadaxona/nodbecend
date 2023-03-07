@@ -2,7 +2,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('Oylikdata', {
+    await queryInterface.createTable('Mijozdata', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -18,16 +18,19 @@ module.exports = {
       magazin: {
         type: Sequelize.STRING
       },
-      ishchilarId: {
+      mijozId: {
         type: Sequelize.INTEGER
       },
-      sana: {
+      date: {
         type: Sequelize.STRING
       },
-      oylik: {
+      summa: {
         type: Sequelize.STRING
       },
-      jami: {
+      kurs: {
+        type: Sequelize.STRING
+      },
+      valyuta: {
         type: Sequelize.STRING
       },
       createdAt: {
@@ -41,6 +44,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('Oylikdata');
+    await queryInterface.dropTable('Mijozdata');
   }
 };

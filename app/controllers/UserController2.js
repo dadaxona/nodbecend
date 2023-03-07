@@ -1,5 +1,5 @@
 const ExcelController = require('./ExcelController');
-const { User, Tip, Tovar, Mijoz, Yetkazuvchi, Oylikdata, Oyliklar, Valyuta, Chiqim, Savdo, Sotuv, Karzina, Zaqaz, Magazin, Jonatma, Yetkazuvchiarxiv } = require('../../models');
+const { User, Tip, Tovar, Mijoz, Ishchilar, Yetkazuvchi, Oylikdata, Oyliklar, Valyuta, Chiqim, Savdo, Sotuv, Karzina, Zaqaz, Magazin, Jonatma, Yetkazuvchiarxiv } = require('../../models');
 const { Op } = require("sequelize");
 class UserController2 extends ExcelController {
 
@@ -20,10 +20,29 @@ class UserController2 extends ExcelController {
         if (req.body.status == 'brend') {
             const user = await User.findOne({ where: { login: req.body.login, token: req.body.token }});
             const date = await Oylikdata.findOne({ where: { ishchilarId: req.body.id, sana: req.body.date2 }});
+            const oyl = await Ishchilar.findByPk(req.body.id);
             if (req.body.ishchilarId) {
-                await Oyliklar.update(req.body, { where: {id: req.body.ishchilarId}});
+                date.oylik = oyl.oylik;
+                await date.save();
+                await Oyliklar.update({ 
+                    userId: user.id,
+                    magazinId: date.magazinId,
+                    magazin: date.magazin,
+                    oylikdataId: date.id,
+                    ishchilarId: date.ishchilarId,
+                    name: req.body.name,
+                    sana: req.body.sana,
+                    koment: req.body.koment,
+                    summa: req.body.summa,
+                    valyuta: req.body.valyuta,
+                    kurs: req.body.kurs
+                    },
+                    { where: {id: req.body.ishchilarId}
+                });
             } else {
                 if (date) {
+                    date.oylik = oyl.oylik;
+                    await date.save();
                     await Oyliklar.create({
                         userId: user.id,
                         magazinId: date.magazinId,
@@ -44,6 +63,7 @@ class UserController2 extends ExcelController {
                         magazin: req.body.magazin,
                         ishchilarId: req.body.id,
                         sana: req.body.date2,
+                        oylik: oyl.oylik
                     });
                     await Oyliklar.create({
                         userId: user.id,
@@ -65,22 +85,49 @@ class UserController2 extends ExcelController {
     }
 
     async Oylikget (req, res) {
-        const oyliklar = await Oyliklar.findAll({ where: { magazinId: req.body.magazinId, ishchilarId: req.body.id }});
-        await Oylikdata.update({ jami: 0 },{ where: {ishchilarId: req.body.id }});
-        for (let i = 0; i < oyliklar.length; i++) {
-            // const oylikdata = await Oylikdata.findOne({ where: { magazinId: req.body.magazinId, id: oyliklar[i].oylikdataId }});
-            const oylikdata = await Oylikdata.findByPk(oyliklar[i].oylikdataId);
-            if (oyliklar[i].valyuta) {
-                oylikdata.jami = parseFloat(oylikdata.jami) + parseFloat(oyliklar[i].summa) * parseFloat(oyliklar[i].kurs);
-                await oylikdata.save();
-            } else {
-                oylikdata.jami = parseFloat(oylikdata.jami) + parseFloat(oyliklar[i].summa);
-                await oylikdata.save();
-            }            
+        if (req.body.filtre) {
+            const oylikdataf = await Oylikdata.findOne({ where: { magazinId: req.body.magazinId, ishchilarId: req.body.id, sana: req.body.filtre }});
+            if (oylikdataf) {
+                const oyliklar = await Oyliklar.findAll({ where: { magazinId: req.body.magazinId, oylikdataId: oylikdataf.id, ishchilarId: req.body.id }});
+                await Oylikdata.update({ jami: 0 },{ where: {ishchilarId: req.body.id }});
+                for (let i = 0; i < oyliklar.length; i++) {
+                    const oylikdata = await Oylikdata.findByPk(oyliklar[i].oylikdataId);
+                    if (oyliklar[i].valyuta) {
+                        oylikdata.jami = parseFloat(oylikdata.jami) + parseFloat(oyliklar[i].summa) * parseFloat(oyliklar[i].kurs);
+                        await oylikdata.save();
+                    } else {
+                        oylikdata.jami = parseFloat(oylikdata.jami) + parseFloat(oyliklar[i].summa);
+                        await oylikdata.save();
+                    }            
+                }
+                const oylikdata2 = await Oylikdata.findAll({ where: { ishchilarId: req.body.id }});
+                const data2 = await Valyuta.findAll({ where: { magazinId: req.body.magazinId } });
+                return res.json({'oylikdata': oylikdata2, 'oyliklar': oyliklar, 'valyuta':data2});
+            } else { }
+        } else {
+            const oyliklar = await Oyliklar.findAll({ where: { magazinId: req.body.magazinId, ishchilarId: req.body.id }});
+            await Oylikdata.update({ jami: 0 },{ where: {ishchilarId: req.body.id }});
+            for (let i = 0; i < oyliklar.length; i++) {
+                const oylikdata = await Oylikdata.findByPk(oyliklar[i].oylikdataId);
+                if (oyliklar[i].valyuta) {
+                    oylikdata.jami = parseFloat(oylikdata.jami) + parseFloat(oyliklar[i].summa) * parseFloat(oyliklar[i].kurs);
+                    await oylikdata.save();
+                } else {
+                    oylikdata.jami = parseFloat(oylikdata.jami) + parseFloat(oyliklar[i].summa);
+                    await oylikdata.save();
+                }            
+            }
+            const oylikdata2 = await Oylikdata.findAll({ where: { ishchilarId: req.body.id }});
+            const data2 = await Valyuta.findAll({ where: { magazinId: req.body.magazinId } });
+            return res.json({'oylikdata': oylikdata2, 'oyliklar': oyliklar, 'valyuta':data2});            
         }
-        const oylikdata2 = await Oylikdata.findAll({ where: { ishchilarId: req.body.id }});
-        const data2 = await Valyuta.findAll({ where: { magazinId: req.body.magazinId } });
-        return res.json({'oylikdata': oylikdata2, 'oyliklar': oyliklar, 'valyuta':data2});
+    }
+
+    async Oy_delet (req, res) {
+        await Oyliklar.destroy({
+            where: { id: req.body.ishchilarId }
+        });
+        return res.json(200);
     }
 
     async Zaqazlar(req, res){
