@@ -21,6 +21,7 @@ module.exports = (sequelize, DataTypes) => {
     qayerga: DataTypes.STRING,
     sabap: DataTypes.STRING,
     summa: DataTypes.STRING,
+    sana: DataTypes.STRING,
     kurs: DataTypes.STRING,
     valyuta: DataTypes.STRING,
   }, {

@@ -134,7 +134,35 @@ class UserController2 extends ExcelController {
         const zaqaz = await Zaqaz.findAll({ where: { magazinId: req.body.magazinId }});
         const karzina = await Karzina.findAll({ where: { magazinId: req.body.magazinId }});
         const jonatma = await Jonatma.findAll({ where: { magazinId: req.body.magazinId }});
-        return res.json({'code': 200, 'zaqaz': zaqaz, 'karzina': karzina, 'jonatma': jonatma});
+        var sav = 0;
+        var ol = 0;
+        var chiq = 0;
+        var bugun = 0;
+        const sotuv = await Sotuv.findAll({ where: { magazinId: req.body.magazinId, sana: req.body.date }});
+        const chiqim = await Chiqim.findAll({ where: { magazinId: req.body.magazinId, sana: req.body.date }});
+        for (let i = 0; i < sotuv.length; i++) {
+            if (sotuv[i].valyuta) {
+                sav += parseFloat(sotuv[i].jami) * parseFloat(sotuv[i].kurs);
+            } else {
+                sav += parseFloat(sotuv[i].jami);
+            }
+        }
+        for (let i0 = 0; i0 < sotuv.length; i0++) {
+            if (sotuv[i0].valyuta) {
+                ol += parseFloat(sotuv[i0].olinish) * parseFloat(sotuv[i0].kurs) * parseFloat(sotuv[i0].soni);
+            } else {
+                ol += parseFloat(sotuv[i0].olinish) * parseFloat(sotuv[i0].soni);
+            }
+        }
+        for (let i3 = 0; i3 < chiqim.length; i3++) {
+            if (chiqim[i3].valyuta) {
+                chiq += parseFloat(chiqim[i3].summa) * parseFloat(chiqim[i3].kurs);   
+            } else {
+                chiq += parseFloat(chiqim[i3].summa);
+            }
+        }
+        bugun = sav - ol - chiq;
+        return res.json({'code': 200, 'zaqaz': zaqaz, 'karzina': karzina, 'jonatma': jonatma, 'jami': sav , 'foyda': bugun });
     }
 
     async Magadb (req, res) {
@@ -364,7 +392,7 @@ class UserController2 extends ExcelController {
                 qarz += parseFloat(savdo[i2].karz);
             }
         }
-        for (let i3 = 0; i3 < chiqim.length; i3++) {;
+        for (let i3 = 0; i3 < chiqim.length; i3++) {
             if (chiqim[i3].valyuta) {
                 chiq += parseFloat(chiqim[i3].summa) * parseFloat(chiqim[i3].kurs);   
             } else {

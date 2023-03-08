@@ -1258,6 +1258,7 @@ class UserController extends UserController2 {
                     qayerga: req.body.qayerga,
                     sabap: req.body.sabap,
                     summa: req.body.summa,
+                    sana: req.body.sana,
                     kurs: req.body.kurs,
                     valyuta: req.body.valyuta,
                 });
@@ -1278,6 +1279,7 @@ class UserController extends UserController2 {
                     qayerga: req.body.qayerga,
                     sabap: req.body.sabap,
                     summa: req.body.summa,
+                    sana: req.body.sana,
                     kurs: req.body.kurs,
                     valyuta: req.body.valyuta,
                 });
@@ -1379,6 +1381,7 @@ class UserController extends UserController2 {
                         chegrma: req.body.local[i].chegirma,
                         skidka: req.body.local[i].skidka,
                         jami: req.body.local[i].jami,
+                        sana: req.body.sana,
                         kurs: req.body.vsumma,
                         valyuta: req.body.vname,
                     });
@@ -1420,6 +1423,7 @@ class UserController extends UserController2 {
                         chegrma: req.body.local[i].chegirma,
                         skidka: req.body.local[i].skidka,
                         jami: req.body.local[i].jami,
+                        sana: req.body.sana,
                         kurs: req.body.vsumma,
                         valyuta: req.body.vname,
                     });
@@ -1488,6 +1492,7 @@ class UserController extends UserController2 {
                         chegrma: req.body.local[i].chegirma,
                         skidka: req.body.local[i].skidka,
                         jami: req.body.local[i].jami,
+                        sana: req.body.sana,
                         kurs: req.body.vsumma,
                         valyuta: req.body.vname,
                     });
@@ -1529,6 +1534,7 @@ class UserController extends UserController2 {
                         chegrma: req.body.local[i].chegirma,
                         skidka: req.body.local[i].skidka,
                         jami: req.body.local[i].jami,
+                        sana: req.body.sana,
                         kurs: req.body.vsumma,
                         valyuta: req.body.vname,
                     });
@@ -1693,8 +1699,8 @@ class UserController extends UserController2 {
         var sql = 0;
         var foyda = 0;
         var mij = 0;
-        // const user = await User.findOne({ where: { login: req.body.login, token: req.body.token }});
-        // if (user) {            
+        const user = await User.findOne({ where: { login: req.body.login, token: req.body.token }});
+        if (user) {            
             const savdo = await Savdo.findAll({ where: { magazinId: req.body.magazinId }});
             const sotuv = await Sotuv.findAll({ where: { magazinId: req.body.magazinId }});
             const chiqim = await Chiqim.findAll({ where: { magazinId: req.body.magazinId }});
@@ -1751,10 +1757,10 @@ class UserController extends UserController2 {
                 }
             }
             foyda = sav - qarz - chiq - yet - ol + mij;
-            return res.json({ 'sav': sav, 'qarz': qarz, 'chiq': chiq, 'yet': yet, 'sql': sql, 'foyda': foyda })
-        // } else {
-
-        // }
+            return res.json({ 'sav': sav, 'qarz': qarz, 'chiq': chiq, 'yet': yet, 'sql': sql, 'foyda': foyda });
+        } else {
+            return res.json({ 'sav': [], 'qarz': [], 'chiq': [], 'yet': [], 'sql': [], 'foyda': [] });
+        }
     }
 }
 module.exports = new UserController();

@@ -30,6 +30,9 @@ module.exports = {
       summa: {
         type: Sequelize.STRING
       },
+      sana: {
+        type: Sequelize.STRING
+      },
       kurs: {
         type: Sequelize.STRING
       },
