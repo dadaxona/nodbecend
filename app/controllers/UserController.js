@@ -387,15 +387,33 @@ class UserController extends UserController2 {
     async Valyuta_Create_Update(req, res){
         if (req.body.status == 'brend') {
             if (req.body.id) {
-                await Valyuta.update({
-                    magazinId: req.body.magazinId,
-                    magazin: req.body.magazin,
-                    name: req.body.name,
+                const valy = await Valyuta.findByPk(req.body.id);
+                await Tovar.update({
+                    valyuta: req.body.name,
                     summa: req.body.summa
-                },
-                {
-                    where: { id: req.body.id }
-                });
+                }, { where: { magazinId: req.body.magazinId, valyuta: valy.name }});
+
+                await Mijoz.update({
+                    valyuta: req.body.name,
+                    kurs: req.body.summa
+                }, { where: { magazinId: req.body.magazinId, valyuta: valy.name }});
+
+                await Yetkazuvchi.update({
+                    valyuta: req.body.name,
+                    kurs: req.body.summa
+                }, { where: { magazinId: req.body.magazinId, valyuta: valy.name }});
+
+                await Karzina.update({
+                    valyuta: req.body.name,
+                    kurs: req.body.summa
+                }, { where: { magazinId: req.body.magazinId, valyuta: valy.name }});
+
+                valy.magazinId = req.body.magazinId;
+                valy.magazin = req.body.magazin;
+                valy.name = req.body.name;
+                valy.summa = req.body.summa;
+                await valy.save();
+            
             } else {
                 const user = await User.findOne({ where: { login: req.body.login, token: req.body.token }});
                 await Valyuta.create({
@@ -409,15 +427,32 @@ class UserController extends UserController2 {
             return res.json(200);
         } else {
             if (req.body.id) {
-                await Valyuta.update({
-                    magazinId: req.body.magazinId,
-                    magazin: req.body.magazin,
-                    name: req.body.name,
+                const valy = await Valyuta.findByPk(req.body.id);
+                await Tovar.update({
+                    valyuta: req.body.name,
                     summa: req.body.summa
-                },
-                {
-                    where: { id: req.body.id }
-                });
+                }, { where: { magazinId: req.body.magazinId, valyuta: valy.name }});
+                
+                await Mijoz.update({
+                    valyuta: req.body.name,
+                    kurs: req.body.summa
+                }, { where: { magazinId: req.body.magazinId, valyuta: valy.name }});
+
+                await Yetkazuvchi.update({
+                    valyuta: req.body.name,
+                    kurs: req.body.summa
+                }, { where: { magazinId: req.body.magazinId, valyuta: valy.name }});
+                
+                await Karzina.update({
+                    valyuta: req.body.name,
+                    kurs: req.body.summa
+                }, { where: { magazinId: req.body.magazinId, valyuta: valy.name }});
+
+                valy.magazinId = req.body.magazinId;
+                valy.magazin = req.body.magazin;
+                valy.name = req.body.name;
+                valy.summa = req.body.summa;
+                await valy.save();
             } else {
                 const user = await Ishchilar.findOne({ where: { login: req.body.login, token: req.body.token }});
                 await Valyuta.create({

@@ -140,7 +140,7 @@ class UserController2 extends ExcelController {
     async Magadb (req, res) {
         const dbsql = await Magazin.findByPk(req.body.sql);
         if (dbsql) {
-            const user = User.findByPk(dbsql.userId);
+            const user = await User.findByPk(dbsql.userId);
             for (let i = 0; i < req.body.databd.length; i++) {
                 const tovars = await Tovar.findByPk(req.body.databd[i].id);
                 tovars.soni = parseFloat(tovars.soni) - parseFloat(req.body.databd[i].soni);
