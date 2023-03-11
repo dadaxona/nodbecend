@@ -204,40 +204,46 @@ class ExcelController {
         if (req.body.status == 'brend') {
             const user = await User.findOne({ where: { login: req.body.login, token: req.body.token }});
             for (let i = 0; i < req.body.massivname.length; i++) {
-                const valyuta = await Valyuta.findOne({ where: { magazinId: req.body.massivname[i].magazinId, name: req.body.massivname[i].valyuta }});
-                if (valyuta) {
-                } else {
-                    await Valyuta.create({
-                        userId: user.id,
-                        magazinId: req.body.massivname[i].magazinId,
-                        magazin: req.body.massivname[i].magazin,
-                        name: req.body.massivname[i].valyuta,
-                        summa: req.body.massivname[i].summa,
-                    });
-                }
-                const tip = await Tip.findOne({ where: { magazinId: req.body.massivname[i].magazinId, name: req.body.massivname[i].tip }});
-                if (tip) {
-                } else {
-                    await Tip.create({
-                        userId: user.id,
-                        magazinId: req.body.massivname[i].magazinId,
-                        magazin: req.body.massivname[i].magazin,
-                        name: req.body.massivname[i].tip,
-                    });
-                }
-                const yetkaz = await Yetkazuvchi.findOne({ where: { magazinId: req.body.massivname[i].magazinId, name: req.body.massivname[i].adress }});
-                if (yetkaz) {
-                } else {
-                    await Yetkazuvchi.create({
-                        userId: user.id,
-                        magazinId: req.body.massivname[i].magazinId,
-                        magazin: req.body.massivname[i].magazin,
-                        name: req.body.massivname[i].adress,
-                        summa: 0,
-                        kurs: '',
-                        valyuta: '',  
-                    });
-                }                
+                if (req.body.massivname[i].valyuta) {
+                    const valyuta = await Valyuta.findOne({ where: { magazinId: req.body.massivname[i].magazinId, name: req.body.massivname[i].valyuta }});
+                    if (valyuta) {
+                    } else {
+                        await Valyuta.create({
+                            userId: user.id,
+                            magazinId: req.body.massivname[i].magazinId,
+                            magazin: req.body.massivname[i].magazin,
+                            name: req.body.massivname[i].valyuta,
+                            summa: req.body.massivname[i].summa,
+                        });
+                    }
+                } else { }
+                if (req.body.massivname[i].tip) {
+                    const tip = await Tip.findOne({ where: { magazinId: req.body.massivname[i].magazinId, name: req.body.massivname[i].tip }});
+                    if (tip) {
+                    } else {
+                        await Tip.create({
+                            userId: user.id,
+                            magazinId: req.body.massivname[i].magazinId,
+                            magazin: req.body.massivname[i].magazin,
+                            name: req.body.massivname[i].tip,
+                        });
+                    }
+                } else { }
+                if (req.body.massivname[i].adress) {
+                    const yetkaz = await Yetkazuvchi.findOne({ where: { magazinId: req.body.massivname[i].magazinId, name: req.body.massivname[i].adress }});
+                    if (yetkaz) {
+                    } else {
+                        await Yetkazuvchi.create({
+                            userId: user.id,
+                            magazinId: req.body.massivname[i].magazinId,
+                            magazin: req.body.massivname[i].magazin,
+                            name: req.body.massivname[i].adress,
+                            summa: 0,
+                            kurs: '',
+                            valyuta: '',
+                        });
+                    }
+                } else { }
                 const tovar = await Tovar.findOne({ where: { magazinId: req.body.massivname[i].magazinId, tip: req.body.massivname[i].tip, adress: req.body.massivname[i].adress, name: req.body.massivname[i].name }});
                 if (tovar) {
                     tovar.ogoh = req.body.massivname[i].ogoh;
@@ -275,41 +281,46 @@ class ExcelController {
         } else {
             const user = await Ishchilar.findOne({ where: { login: req.body.login, token: req.body.token }});
             for (let i = 0; i < req.body.massivname.length; i++) {
-                const valyuta = await Valyuta.findOne({ where: { magazinId: req.body.massivname[i].magazinId, name: req.body.massivname[i].valyuta }});
-                if (valyuta) {
-                } else {
-                    await Valyuta.create({
-                        userId: user.userId,
-                        magazinId: req.body.massivname[i].magazinId,
-                        magazin: req.body.massivname[i].magazin,
-                        name: req.body.massivname[i].valyuta,
-                        summa: req.body.massivname[i].summa,
-                    });
-                }
-                const tip = await Tip.findOne({ where: { magazinId: req.body.massivname[i].magazinId, name: req.body.massivname[i].tip }});
-                if (tip) {
-                } else {
-                    await Tip.create({
-                        userId: user.userId,
-                        magazinId: req.body.massivname[i].magazinId,
-                        magazin: req.body.massivname[i].magazin,
-                        name: req.body.massivname[i].tip,
-                    });
-                }
-                const yetkaz = await Yetkazuvchi.findOne({ where: { magazinId: req.body.massivname[i].magazinId, name: req.body.massivname[i].adress }});
-                if (yetkaz) {
-                } else {
-                    await Yetkazuvchi.create({
-                        userId: user.userId,
-                        magazinId: req.body.massivname[i].magazinId,
-                        magazin: req.body.massivname[i].magazin,
-                        name: req.body.massivname[i].adress,
-                        summa: 0,
-                        kurs: '',
-                        valyuta: '',  
-                    });
-                }
-                
+                if (req.body.massivname[i].valyuta) {
+                    const valyuta = await Valyuta.findOne({ where: { magazinId: req.body.massivname[i].magazinId, name: req.body.massivname[i].valyuta }});
+                    if (valyuta) {
+                    } else {
+                        await Valyuta.create({
+                            userId: user.userId,
+                            magazinId: req.body.massivname[i].magazinId,
+                            magazin: req.body.massivname[i].magazin,
+                            name: req.body.massivname[i].valyuta,
+                            summa: req.body.massivname[i].summa,
+                        });
+                    }
+                } else { }
+                if (req.body.massivname[i].tip) {
+                    const tip = await Tip.findOne({ where: { magazinId: req.body.massivname[i].magazinId, name: req.body.massivname[i].tip }});
+                    if (tip) {
+                    } else {
+                        await Tip.create({
+                            userId: user.userId,
+                            magazinId: req.body.massivname[i].magazinId,
+                            magazin: req.body.massivname[i].magazin,
+                            name: req.body.massivname[i].tip,
+                        });
+                    }
+                } else { }
+                if (req.body.massivname[i].adress) {
+                    const yetkaz = await Yetkazuvchi.findOne({ where: { magazinId: req.body.massivname[i].magazinId, name: req.body.massivname[i].adress }});
+                    if (yetkaz) {
+                    } else {
+                        await Yetkazuvchi.create({
+                            userId: user.userId,
+                            magazinId: req.body.massivname[i].magazinId,
+                            magazin: req.body.massivname[i].magazin,
+                            name: req.body.massivname[i].adress,
+                            summa: 0,
+                            kurs: '',
+                            valyuta: '',  
+                        });
+                    }
+                } else { }                
                 const tovar = await Tovar.findOne({ where: { magazinId: req.body.massivname[i].magazinId, tip: req.body.massivname[i].tip, adress: req.body.massivname[i].adress, name: req.body.massivname[i].name }});
                 if (tovar) {
                     tovar.ogoh = req.body.massivname[i].ogoh;
