@@ -89,7 +89,7 @@ class UserController extends UserController2 {
     
     async DolgiCilent (req, res) {
         const date = req.body.date;
-        const srok = await Savdo.findAll({ where: { karz: { [Op.gt]: '0' }, srok: { [Op.lt]: date }}});
+        const srok = await Savdo.findAll({ where: { magazinId: req.body.magazinId, karz: { [Op.gt]: '0' }, srok: { [Op.lt]: date }}});
         if (srok.length > 0) {
             for (let i = 0; i < srok.length; i++) {
                 var tekshir = '';
