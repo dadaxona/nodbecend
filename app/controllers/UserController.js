@@ -88,6 +88,7 @@ class UserController extends UserController2 {
     }
     
     async DolgiCilent (req, res) {
+        var pushcom = [];
         const date = req.body.date;
         const srok = await Savdo.findAll({ where: { magazinId: req.body.magazinId, karz: { [Op.gt]: '0' }, srok: { [Op.lt]: date }}});
         if (srok.length > 0) {
@@ -120,14 +121,15 @@ class UserController extends UserController2 {
                                         tk = 0;
                                     }
                                     msg = `Assalomu alaykum hurmatli mijoz sizning ${maga.name} do'kon dan qarzinggiz muddati kelganligi uchun xisobinggizdan ${tekshir} ${mijoz.valyuta} yechib olindi. Hozirda xisobinggizda ${mijoz.summa} ${mijoz.valyuta} qoldi. Qolgan qarzinggiz ${tk} UZS. Biz bilan savdo qilganinggiz uchun tashakkur. Hurmat bilan ${maga.name} jamosi`
-                                    axios({
-                                        method: 'post',
-                                        url: "https://api.telegram.org/bot" + maga.telegram + "/sendMessage",
-                                        data: {
-                                            chat_id: mijoz.telegram,
-                                            text: msg
-                                        },
-                                    }); 
+                                    // axios({
+                                    //     method: 'post',
+                                    //     url: "https://api.telegram.org/bot" + maga.telegram + "/sendMessage",
+                                    //     data: {
+                                    //         chat_id: mijoz.telegram,
+                                    //         text: msg
+                                    //     },
+                                    // }); 
+                                    pushcom.push({ 'chat_id': mijoz.telegram, 'msg': msg, 'mega': maga.telegram });
                                 } else { }
                             } else {
                                 var teks = '';
@@ -151,14 +153,15 @@ class UserController extends UserController2 {
                                     tk = 0;
                                 }
                                 msg = `Assalomu alaykum hurmatli mijoz sizning ${maga.name} do'kon dan qarzinggiz muddati kelganligi uchun xisobinggizdan ${mjsum} ${mijoz.valyuta} yechib olindi. Hozirda xisobinggizda ${mijoz.summa} ${mijoz.valyuta} qoldi. Qolgan qarzinggiz ${tk} UZS. Biz bilan savdo qilganinggiz uchun tashakkur. Hurmat bilan ${maga.name} jamosi`
-                                axios({
-                                    method: 'post',
-                                    url: "https://api.telegram.org/bot" + maga.telegram + "/sendMessage",
-                                    data: {
-                                        chat_id: mijoz.telegram,
-                                        text: msg
-                                    },
-                                });
+                                // axios({
+                                //     method: 'post',
+                                //     url: "https://api.telegram.org/bot" + maga.telegram + "/sendMessage",
+                                //     data: {
+                                //         chat_id: mijoz.telegram,
+                                //         text: msg
+                                //     },
+                                // });
+                                pushcom.push({ 'chat_id': mijoz.telegram, 'msg': msg, 'mega': maga.telegram });
                             }
                         } else {
                             tekshir = srok[i].karz / mijoz.kurs;
@@ -213,14 +216,15 @@ class UserController extends UserController2 {
                                     tk = 0;
                                 }
                                 msg = `Assalomu alaykum hurmatli mijoz sizning ${maga.name} do'kon dan qarzinggiz muddati kelganligi uchun xisobinggizdan ${mjsum} ${mijoz.valyuta} yechib olindi. Hozirda xisobinggizda ${mijoz.summa} ${mijoz.valyuta} qoldi. Qolgan qarzinggiz ${tk} UZS. Biz bilan savdo qilganinggiz uchun tashakkur. Hurmat bilan ${maga.name} jamosi`
-                                axios({
-                                    method: 'post',
-                                    url: "https://api.telegram.org/bot" + maga.telegram + "/sendMessage",
-                                    data: {
-                                        chat_id: mijoz.telegram,
-                                        text: msg
-                                    },
-                                });
+                                // axios({
+                                //     method: 'post',
+                                //     url: "https://api.telegram.org/bot" + maga.telegram + "/sendMessage",
+                                //     data: {
+                                //         chat_id: mijoz.telegram,
+                                //         text: msg
+                                //     },
+                                // });
+                                pushcom.push({ 'chat_id': mijoz.telegram, 'msg': msg, 'mega': maga.telegram });
                             }
                         }
                     } else {
@@ -246,14 +250,15 @@ class UserController extends UserController2 {
                                         tk2 = 0;
                                     }
                                     msg = `Assalomu alaykum hurmatli mijoz sizning ${maga.name} do'kon dan qarzinggiz muddati kelganligi uchun xisobinggizdan ${tekshir} UZS yechib olindi. Hozirda xisobinggizda ${mijoz.summa} UZS qoldi. Qolgan qarzinggiz ${tk2} UZS. Biz bilan savdo qilganinggiz uchun tashakkur. Hurmat bilan ${maga.name} jamosi`
-                                    axios({
-                                        method: 'post',
-                                        url: "https://api.telegram.org/bot" + maga.telegram + "/sendMessage",
-                                        data: {
-                                            chat_id: mijoz.telegram,
-                                            text: msg
-                                        },
-                                    }); 
+                                    // axios({
+                                    //     method: 'post',
+                                    //     url: "https://api.telegram.org/bot" + maga.telegram + "/sendMessage",
+                                    //     data: {
+                                    //         chat_id: mijoz.telegram,
+                                    //         text: msg
+                                    //     },
+                                    // }); 
+                                    pushcom.push({ 'chat_id': mijoz.telegram, 'msg': msg, 'mega': maga.telegram });
                                 } else { }    
                             } else {
                                 var teks = '';
@@ -277,14 +282,15 @@ class UserController extends UserController2 {
                                     tk = 0;
                                 }
                                 msg = `Assalomu alaykum hurmatli mijoz sizning ${maga.name} do'kon dan qarzinggiz muddati kelganligi uchun xisobinggizdan ${mjsum} UZS yechib olindi. Hozirda xisobinggizda ${mijoz.summa} UZS qoldi. Qolgan qarzinggiz ${tk} UZS. Biz bilan savdo qilganinggiz uchun tashakkur. Hurmat bilan ${maga.name} jamosi`
-                                axios({
-                                    method: 'post',
-                                    url: "https://api.telegram.org/bot" + maga.telegram + "/sendMessage",
-                                    data: {
-                                        chat_id: mijoz.telegram,
-                                        text: msg
-                                    },
-                                });
+                                // axios({
+                                //     method: 'post',
+                                //     url: "https://api.telegram.org/bot" + maga.telegram + "/sendMessage",
+                                //     data: {
+                                //         chat_id: mijoz.telegram,
+                                //         text: msg
+                                //     },
+                                // });
+                                pushcom.push({ 'chat_id': mijoz.telegram, 'msg': msg, 'mega': maga.telegram });
                             }
                         } else {
                             tekshir = srok[i].karz;
@@ -308,14 +314,15 @@ class UserController extends UserController2 {
                                         tk3 = 0;
                                     }
                                     msg = `Assalomu alaykum hurmatli mijoz sizning ${maga.name} do'kon dan qarzinggiz muddati kelganligi uchun xisobinggizdan ${tekshir} UZS yechib olindi. Hozirda xisobinggizda ${mijoz.summa} UZS qoldi. Qolgan qarzinggiz ${tk3} UZS. Biz bilan savdo qilganinggiz uchun tashakkur. Hurmat bilan ${maga.name} jamosi`
-                                    axios({
-                                        method: 'post',
-                                        url: "https://api.telegram.org/bot" + maga.telegram + "/sendMessage",
-                                        data: {
-                                            chat_id: mijoz.telegram,
-                                            text: msg
-                                        },
-                                    }); 
+                                    // axios({
+                                    //     method: 'post',
+                                    //     url: "https://api.telegram.org/bot" + maga.telegram + "/sendMessage",
+                                    //     data: {
+                                    //         chat_id: mijoz.telegram,
+                                    //         text: msg
+                                    //     },
+                                    // }); 
+                                    pushcom.push({ 'chat_id': mijoz.telegram, 'msg': msg, 'mega': maga.telegram });
                                 } else { }    
                             } else {
                                 var teks = '';
@@ -339,14 +346,15 @@ class UserController extends UserController2 {
                                     tk = 0;
                                 }
                                 msg = `Assalomu alaykum hurmatli mijoz sizning ${maga.name} do'kon dan qarzinggiz muddati kelganligi uchun xisobinggizdan ${mjsum} UZS yechib olindi. Hozirda xisobinggizda ${mijoz.summa} UZS qoldi. Qolgan qarzinggiz ${teks} UZS. Biz bilan savdo qilganinggiz uchun tashakkur. Hurmat bilan ${maga.name} jamosi`
-                                axios({
-                                    method: 'post',
-                                    url: "https://api.telegram.org/bot" + maga.telegram + "/sendMessage",
-                                    data: {
-                                        chat_id: mijoz.telegram,
-                                        text: msg
-                                    },
-                                });
+                                // axios({
+                                //     method: 'post',
+                                //     url: "https://api.telegram.org/bot" + maga.telegram + "/sendMessage",
+                                //     data: {
+                                //         chat_id: mijoz.telegram,
+                                //         text: msg
+                                //     },
+                                // });
+                                pushcom.push({ 'chat_id': mijoz.telegram, 'msg': msg, 'mega': maga.telegram });
                             }
                         }
                     }
@@ -361,16 +369,18 @@ class UserController extends UserController2 {
                         }
                     }
                     msg = `Assalomu alaykum hurmatli mijoz sizning ${maga.name} do'kon dan qarzinggizni belgilangan muddati keldi.To'lov summasi ${mk}`
-                    axios({
-                        method: 'post',
-                        url: "https://api.telegram.org/bot" + maga.telegram + "/sendMessage",
-                        data: {
-                            chat_id: mijoz.telegram,
-                            text: msg
-                        },
-                    });
-                }                
-            }                
+                    // axios({
+                    //     method: 'post',
+                    //     url: "https://api.telegram.org/bot" + maga.telegram + "/sendMessage",
+                    //     data: {
+                    //         chat_id: mijoz.telegram,
+                    //         text: msg
+                    //     },
+                    // });
+                    pushcom.push({ 'chat_id': mijoz.telegram, 'msg': msg, 'mega': maga.telegram });
+                }
+            }
+            return res.json(pushcom);
         } else { }
     }
 
