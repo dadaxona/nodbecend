@@ -706,7 +706,7 @@ class UserController extends UserController2 {
                         await data2[i].save();                            
                     } else {
                         data2[i].karz += parseFloat(sav[p].karz);
-                        await data2[i].save();  
+                        await data2[i].save();
                     }
                 }
             }
