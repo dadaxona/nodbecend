@@ -71,6 +71,7 @@ route.post('/foyda_post', UserController.Foyda_Post)
 // Torgosoft
 route.post('/serchtor_live', UserController.Serchtor_live)
 route.post('/foyda_post_bugun', UserController.Foyda_Post_Bugun)
+route.post('/etagazin_fn', UserController.Getagazin_fn)
 
 route.post('/post_tip_exsel', UserController.Post_Tip_Exsel)
 route.post('/post_update_exsel', UserController.Post_Update_Exsel)

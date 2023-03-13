@@ -362,6 +362,15 @@ class UserController2 extends ExcelController {
         return res.json(db);
     }
 
+    async Getagazin_fn(req, res){
+        const user = await User.findOne({ where: { login: req.body.login, token: req.body.token }});
+        if (user) {
+            const db = await Magazin.findAll({ where: { userId: user.id }});
+            const mij = await Mijoz.findAll({ where: { userId: user.id }});
+            return res.json({'mag': db, 'prad': mij});            
+        } else {}
+    }
+
     async Foyda_Post_Bugun (req, res) {
         var sav = 0;
         var ol = 0;
