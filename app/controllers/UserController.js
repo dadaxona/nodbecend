@@ -14,8 +14,7 @@ class UserController extends UserController2 {
             const user = await User.findOne({ where: { login: req.body.login, token: req.body.token }});
             return res.json(user);
         } else {
-            const ish = await Ishchilar.findOne({ where: { login: req.body.login, token: req.body.token }});
-            const user = await User.findByPk(ish.userId);
+            const user = await Ishchilar.findOne({ where: { login: req.body.login, token: req.body.token }});
             return res.json(user);
         }
     }
@@ -695,13 +694,12 @@ class UserController extends UserController2 {
             }
             return res.json({'obj': data2, 'valyuta': valyuta});
         } else {
-            const user = await Ishchilar.findOne({ where: { login: req.body.login, token: req.body.token }});     
-            const data2 = await Mijoz.findAll({ where: { magazinId: user.magazinId } });
-            const valyuta = await Valyuta.findAll({ where: { magazinId: req.body.magazinId } });
+            const data2 = await Mijoz.findAll({ where: { magazinId: req.body.magazinId } });
+            const valyuta = await Valyuta.findAll({ where: { magazinId: req.body.magazinId } });                
             for (let i = 0; i < data2.length; i++) {
                 data2[i].karz = 0;
                 await data2[i].save();
-                var sav = await Savdo.findAll({ where: { magazinId: data2[i].magazinId }});
+                var sav = await Savdo.findAll({ where: { mijozId: data2[i].id }});
                 for (let p = 0; p < sav.length; p++) {
                     if (sav[p].valyuta) {
                         data2[i].karz += parseFloat(sav[p].karz) * parseFloat(sav[p].kurs);
