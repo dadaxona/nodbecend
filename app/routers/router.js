@@ -3,6 +3,7 @@ const UserController = require('../controllers/UserController')
 const route = Router()
 
 route.get('/test', UserController.Tester)
+route.post('/filtrsotuv', UserController.Filtrsotuv)
 route.post('/loginauth', UserController.Login)
 route.post('/register', UserController.Registration)
 route.post('/virfiy', UserController.Verifiy)

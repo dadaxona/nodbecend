@@ -7,6 +7,12 @@ class UserController2 extends ExcelController {
         return res.json("Node");
     }
 
+    async Filtrsotuv(req, res){
+        const savdo = await Savdo.findAll({ where: { magazinId: req.body.magazinId, sana: req.body.date }});
+        const sotuv = await Sotuv.findAll({ where: { magazinId: req.body.magazinId, sana: req.body.date }});
+        return res.json({'savdo': savdo, 'sotuv': sotuv});
+    }
+
     async Serchtor_live (req, res) {
         const tovar = await Tovar.findAll({ where: { magazinId: req.body.magazinId }});
         if (tovar) {
