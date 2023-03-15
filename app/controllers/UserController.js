@@ -50,7 +50,7 @@ class UserController extends UserController2 {
             if (req.body.magazinId) {
                 if (user) {
                     const mijoz = await Mijoz.findAll({ where: { magazinId: { [Op.eq]: req.body.magazinId }}});
-                    const savdo = await Savdo.findAll({ where: { magazinId: req.body.magazinId }});
+                    const savdo = await Savdo.findAll({ where: { magazinId: req.body.magazinId }, order: [['id', 'DESC']]});
                     const sotuv = await Sotuv.findAll({ where: { magazinId: req.body.magazinId }});
                     const karz = await Savdo.findAll({ where: { magazinId: req.body.magazinId , karz: { [Op.gt]: '0' }}});
                     const srok = await Savdo.findAll({ where: { magazinId: req.body.magazinId , karz: { [Op.gt]: '0' }, srok: { [Op.lt]: req.body.date }}});
@@ -71,7 +71,7 @@ class UserController extends UserController2 {
             if (ish) {
                 const mijoz = await Mijoz.findAll({ where: { magazinId: { [Op.eq]: ish.magazinId }}});
                 const savdo = await Savdo.findAll({ where: { magazinId: ish.magazinId }});
-                const sotuv = await Sotuv.findAll({ where: { magazinId: req.body.magazinId }});
+                const sotuv = await Sotuv.findAll({ where: { magazinId: req.body.magazinId }, order: [['id', 'DESC']]});
                 const karz = await Savdo.findAll({ where: { magazinId: ish.magazinId , karz: { [Op.gt]: '0' }}});
                 const srok = await Savdo.findAll({ where: { magazinId: ish.magazinId , karz: { [Op.gt]: '0' }, srok: { [Op.lt]: req.body.date }}});
                 const zaqaz = await Zaqaz.findAll({ where: { magazinId: ish.magazinId }});

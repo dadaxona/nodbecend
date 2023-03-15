@@ -28,6 +28,7 @@ route.post('/sqldbpost', UserController.Sqldbpost)
 route.post('/oylikget', UserController.Oylikget)
 route.post('/oylik_create', UserController.Oylik_create)
 route.post('/oy_delet', UserController.Oy_delet)
+route.post('/ishchiget_get', UserController.Ishchiget_get)
 
 route.post('/gettip', UserController.Gettip)
 route.post('/post_update', UserController.Post_Update_Tip)

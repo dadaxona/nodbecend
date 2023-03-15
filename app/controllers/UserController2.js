@@ -8,9 +8,47 @@ class UserController2 extends ExcelController {
     }
 
     async Filtrsotuv(req, res){
-        const savdo = await Savdo.findAll({ where: { magazinId: req.body.magazinId, sana: req.body.date }});
-        const sotuv = await Sotuv.findAll({ where: { magazinId: req.body.magazinId, sana: req.body.date }});
-        return res.json({'savdo': savdo, 'sotuv': sotuv});
+        if (req.body.clent) {
+            if (req.body.date) {
+                const savdo = await Savdo.findAll({ where: { magazinId: req.body.magazinId, mijozId: req.body.clent, sana: req.body.date }});
+                const sotuv = await Sotuv.findAll({ where: { magazinId: req.body.magazinId }});
+                return res.json({'savdo': savdo, 'sotuv': sotuv});  
+            } else {
+                const savdo = await Savdo.findAll({ where: { magazinId: req.body.magazinId, mijozId: req.body.clent }});
+                const sotuv = await Sotuv.findAll({ where: { magazinId: req.body.magazinId }});
+                return res.json({'savdo': savdo, 'sotuv': sotuv});                
+            }
+        } else if (req.body.date) {
+            if (req.body.clent) {
+                const savdo = await Savdo.findAll({ where: { magazinId: req.body.magazinId, mijozId: req.body.clent, sana: req.body.date }});
+                const sotuv = await Sotuv.findAll({ where: { magazinId: req.body.magazinId }});
+                return res.json({'savdo': savdo, 'sotuv': sotuv});  
+            } else {
+                const savdo = await Savdo.findAll({ where: { magazinId: req.body.magazinId, sana: req.body.date }});
+                const sotuv = await Sotuv.findAll({ where: { magazinId: req.body.magazinId }});
+                return res.json({'savdo': savdo, 'sotuv': sotuv});                
+            }
+        } else if (req.body.ishchi) {
+
+            if (req.body.date) {
+                const savdo = await Savdo.findAll({ where: { magazinId: req.body.magazinId, sotivchi: req.body.ishchi, sana: req.body.date }});
+                const sotuv = await Sotuv.findAll({ where: { magazinId: req.body.magazinId }});
+                return res.json({'savdo': savdo, 'sotuv': sotuv});  
+            } else {
+                const savdo = await Savdo.findAll({ where: { magazinId: req.body.magazinId, sotivchi: req.body.ishchi }});
+                const sotuv = await Sotuv.findAll({ where: { magazinId: req.body.magazinId }});
+                return res.json({'savdo': savdo, 'sotuv': sotuv});             
+            }
+        } else {
+            const savdo = await Savdo.findAll({ where: { magazinId: req.body.magazinId }});
+            const sotuv = await Sotuv.findAll({ where: { magazinId: req.body.magazinId }});
+            return res.json({'savdo': savdo, 'sotuv': sotuv});
+        }
+    }
+
+    async Ishchiget_get (req, res) {
+        const ishchilar = await Ishchilar.findAll({ where: { magazinId: req.body.magazinId }});
+        return res.json(ishchilar);
     }
 
     async Serchtor_live (req, res) {
@@ -373,7 +411,8 @@ class UserController2 extends ExcelController {
         if (user) {
             const db = await Magazin.findAll({ where: { userId: user.id }});
             const mij = await Mijoz.findAll({ where: { userId: user.id }});
-            return res.json({'mag': db, 'prad': mij});            
+            const ish = await Ishchilar.findAll({ where: { userId: user.id }});
+            return res.json({'mag': db, 'ish': ish, 'prad': mij});            
         } else {}
     }
 
