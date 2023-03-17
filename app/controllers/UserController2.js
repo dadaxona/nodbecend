@@ -409,10 +409,12 @@ class UserController2 extends ExcelController {
     async Getagazin_fn(req, res){
         const user = await User.findOne({ where: { login: req.body.login, token: req.body.token }});
         if (user) {
+            const savdo = await Savdo.findAll({ where: { magazinId: req.body.magazinId }});
             const db = await Magazin.findAll({ where: { userId: user.id }});
-            const mij = await Mijoz.findAll({ where: { userId: user.id }});
+            const mij = await Mijoz.findAll({ where: { userId: user.id, magazinId: req.body.magazinId }});
             const ish = await Ishchilar.findAll({ where: { userId: user.id }});
-            return res.json({'mag': db, 'ish': ish, 'prad': mij});            
+            const rasxod = await Chiqim.findAll({ where: { userId: user.id, magazinId: req.body.magazinId }});
+            return res.json({'savdo': savdo, 'mag': db, 'ish': ish, 'prad': mij, 'rasxod': rasxod});            
         } else {}
     }
 
