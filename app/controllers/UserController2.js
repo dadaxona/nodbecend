@@ -414,7 +414,7 @@ class UserController2 extends ExcelController {
             const mij = await Mijoz.findAll({ where: { userId: user.id, magazinId: req.body.magazinId }});
             const ish = await Ishchilar.findAll({ where: { userId: user.id }});
             const rasxod = await Chiqim.findAll({ where: { userId: user.id, magazinId: req.body.magazinId }});
-            return res.json({'savdo': savdo, 'mag': db, 'ish': ish, 'prad': mij, 'rasxod': rasxod});            
+            return res.json({'savdo': savdo, 'mag': db, 'ish': ish, 'prad': mij, 'rasxod': rasxod});
         } else {}
     }
 
