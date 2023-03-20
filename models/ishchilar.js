@@ -22,6 +22,7 @@ module.exports = (sequelize, DataTypes) => {
     password: DataTypes.STRING,
     token: DataTypes.STRING,
     status: DataTypes.STRING,
+    typ: DataTypes.STRING,
     magazinId: DataTypes.INTEGER,
     magazin: DataTypes.STRING,
     valyuta: DataTypes.STRING,

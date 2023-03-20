@@ -499,6 +499,7 @@ class UserController extends UserController2 {
                 password: req.body.password,
                 token: req.body.token2,
                 status: req.body.status2,
+                typ: req.body.typ,
                 magazinId: magazin.id,
                 magazin: magazin.name,
             },
@@ -519,6 +520,8 @@ class UserController extends UserController2 {
                     password: req.body.password,
                     token: req.body.token2,
                     status: req.body.status2,
+                    status: req.body.status2,
+                    typ: req.body.typ,
                     magazinId: magazin.id,
                     magazin: magazin.name,
                 });

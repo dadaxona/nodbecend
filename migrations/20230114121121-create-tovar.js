@@ -28,10 +28,10 @@ module.exports = {
         type: Sequelize.STRING
       },
       ogoh: {
-        type: Sequelize.INTEGER
+        type: Sequelize.STRING
       },
       soni: {
-        type: Sequelize.INTEGER
+        type: Sequelize.STRING
       },
       olinish: {
         type: Sequelize.STRING

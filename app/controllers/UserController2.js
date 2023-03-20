@@ -1,5 +1,5 @@
 const ExcelController = require('./ExcelController');
-const { User, Tip, Tovar, Mijoz, Ishchilar, Yetkazuvchi, Oylikdata, Oyliklar, Valyuta, Chiqim, Savdo, Sotuv, Karzina, Zaqaz, Magazin, Jonatma, Yetkazuvchiarxiv } = require('../../models');
+const { User, Tip, Tovar, Mijoz, Ishchilar, Zadachadb, Yetkazuvchi, Oylikdata, Oyliklar, Valyuta, Chiqim, Savdo, Sotuv, Karzina, Zaqaz, Magazin, Jonatma, Yetkazuvchiarxiv } = require('../../models');
 const { Op } = require("sequelize");
 class UserController2 extends ExcelController {
 
@@ -68,7 +68,7 @@ class UserController2 extends ExcelController {
             if (req.body.ishchilarId) {
                 date.oylik = oyl.oylik;
                 await date.save();
-                await Oyliklar.update({ 
+                await Oyliklar.update({
                     userId: user.id,
                     magazinId: date.magazinId,
                     magazin: date.magazin,
@@ -456,7 +456,50 @@ class UserController2 extends ExcelController {
             }
         }      
         foyda = sav - qarz - chiq - ol;
-        return res.json({ 'code': 200, 'sav': sav, 'qarz': qarz, 'chiq': chiq, 'foyda': foyda })
+        return res.json({ 'code': 200, 'sav': sav, 'qarz': qarz, 'chiq': chiq, 'foyda': foyda });
+    }
+
+    async Getzadacha (req, res) {
+        if (req.body.status == 'brend') {
+            const ish = await Ishchilar.findAll({ where: { magazinId: req.body.magazinId }});
+            const zad = await Zadachadb.findAll({ where: { magazinId: req.body.magazinId }});
+            return res.json({'ish': ish, 'zad': zad });
+        } else {
+            const user = await Ishchilar.findOne({ where: { login: req.body.login, token: req.body.token }});
+            const ish = await Ishchilar.findAll({ where: { magazinId: req.body.magazinId }});
+            const zad = await Zadachadb.findAll({ where: { magazinId: req.body.magazinId, ishchilarId: user.id }});
+            return res.json({'ish': ish, 'zad': zad });
+        }
+    }
+
+    async Create_zad (req, res) {
+        if (req.body.id) {
+            await Zadachadb.update({
+                ishchilarId: req.body.ishchilarId,
+                name: req.body.name,
+                sana: req.body.sana,
+                zadacha: req.body.zadacha,
+                stasus: req.body.stasus
+            }, { where: { id: req.body.id }});
+        } else {
+            const user = await User.findOne({ where: { login: req.body.login, token: req.body.token }});
+            await Zadachadb.create({
+                userId: user.id,
+                magazinId: req.body.magazinId,
+                magazin: req.body.magazin,
+                ishchilarId: req.body.ishchilarId,
+                name: req.body.name,
+                sana: req.body.sana,
+                zadacha: req.body.zadacha,
+                stasus: req.body.stasus
+            });
+            return res.json({ 'code': 200 });
+        }
+    }
+
+    async Delete_zad (req, res) {
+        await Zadachadb.destroy({ where: { id: req.body.id }});
+        return res.json({ 'code': 200 });
     }
 }
 module.exports = UserController2;
