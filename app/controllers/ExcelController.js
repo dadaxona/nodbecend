@@ -248,9 +248,9 @@ class ExcelController {
                 if (tovar) {
                     tovar.ogoh = req.body.massivname[i].ogoh;
                     if (tovar.soni == 0) {
-                        tovar.soni = req.body.massivname[i].soni;
+                        tovar.soni = parseFloat(req.body.massivname[i].soni);
                     } else {
-                        tovar.soni = tovar.soni + parseFloat(req.body.massivname[i].soni);                        
+                        tovar.soni = parseFloat(tovar.soni) + parseFloat(req.body.massivname[i].soni);                        
                     }
                     tovar.olinish = req.body.massivname[i].olinish;
                     tovar.sotilish = req.body.massivname[i].sotilish;
@@ -325,9 +325,9 @@ class ExcelController {
                 if (tovar) {
                     tovar.ogoh = req.body.massivname[i].ogoh;
                     if (tovar.soni == 0) {
-                        tovar.soni = req.body.massivname[i].soni;
+                        tovar.soni = parseFloat(req.body.massivname[i].soni);
                     } else {
-                        tovar.soni = tovar.soni + parseFloat(req.body.massivname[i].soni);                        
+                        tovar.soni = parseFloat(tovar.soni) + parseFloat(req.body.massivname[i].soni);                        
                     }
                     tovar.olinish = req.body.massivname[i].olinish;
                     tovar.sotilish = req.body.massivname[i].sotilish;

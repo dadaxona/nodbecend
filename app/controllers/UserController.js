@@ -559,7 +559,8 @@ class UserController extends UserController2 {
 
     async Telv (req, res) {
         const data2 = await Tovar.findAll({ where: { magazinId: req.body.magazinId } });
-        return res.json(data2);
+        const data3 = await Valyuta.findAll({ where: { magazinId: req.body.magazinId } });
+        return res.json({'data2': data2, 'data3': data3});
     }
 
     async MijozTelv (req, res) {
@@ -1558,6 +1559,9 @@ class UserController extends UserController2 {
                 magazin: req.body.magazin,
                 sotivchi: user.name,
                 name: req.body.name,
+                valyutaId: req.body.vid,
+                valyuta: req.body.vname,
+                kurs: req.body.vsumma,
             });
             for (let i = 0; i < req.body.local.length; i++) {  
                 await Karzina.create({               
@@ -1588,7 +1592,10 @@ class UserController extends UserController2 {
                 magazinId: req.body.magazinId,
                 magazin: req.body.magazin,
                 sotivchi: user.name,
-                name: req.body.name
+                name: req.body.name,
+                valyutaId: req.body.vid,
+                valyuta: req.body.vname,
+                kurs: req.body.vsumma,
             });
             for (let i = 0; i < req.body.local.length; i++) {  
                 await Karzina.create({               
@@ -1639,8 +1646,8 @@ class UserController extends UserController2 {
     }
 
     async Zaqaz_Delet(req, res) {
-        await Zaqaz.destroy({ where: {id: req.body.id} });
-        await Karzina.destroy({ where: {zaqazId: req.body.id} });
+        await Zaqaz.destroy({ where: {id: req.body.item.id} });
+        await Karzina.destroy({ where: {zaqazId: req.body.item.id} });
         return res.json(200);
     }
     async Sotuv_Post_Id(req, res) {
